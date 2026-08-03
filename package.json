@@ -1,0 +1,22 @@
+﻿{
+  "name": "github-farm",
+  "version": "0.1.0",
+  "description": "Turn your GitHub contributions into a Stardew Valley-style pixel farm",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node src/index.js --dev",
+    "build": "node src/index.js --build",
+    "preview": "npx serve dist"
+  },
+  "keywords": ["github", "contribution", "visualization", "pixel-art", "stardew-valley", "farm"],
+  "author": "YeatsLiao",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YeatsLiao/github-farm.git"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
