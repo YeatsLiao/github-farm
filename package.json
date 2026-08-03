@@ -1,12 +1,12 @@
-﻿{
+{
   "name": "github-farm",
   "version": "0.1.0",
   "description": "Turn your GitHub contributions into a Stardew Valley-style pixel farm",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "dev": "node src/index.js --dev",
-    "build": "node src/index.js --build",
+    "dev": "node src/index.js --mock",
+    "build": "node src/index.js --mock",
     "preview": "npx serve dist"
   },
   "keywords": ["github", "contribution", "visualization", "pixel-art", "stardew-valley", "farm"],
