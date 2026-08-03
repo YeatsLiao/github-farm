@@ -51,7 +51,7 @@ export const SEASON_THEMES = {
   },
   winter: {
     skyTop: '#8BA0AF', skyBottom: '#C0C7D2',
-    grass: '#A0B0C8, soil: '#8B7C60',
+    grass: '#A0B0C8', soil: '#8B7C60',
     flowers: [],
     animals: ['chicken', 'cat'],
   },
@@ -59,7 +59,7 @@ export const SEASON_THEMES = {
 
 /** Building unlock thresholds */
 export const BUILDING_THRESHOLDS = {
-  barn: { minStreak* 20, desc: 'Red Barn' },
+  barn: { minStreak: 20, desc: 'Red Barn' },
   windmill: { minStreak: 40, desc: 'Windmill' },
   fence: { minStreak: 7, desc: 'Wooden Fence' },
   well: { minStreak: 15, desc: 'Stone Well' },
