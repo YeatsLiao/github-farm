@@ -1,5 +1,7 @@
 ﻿# GitHub Farm
 
+**English** | [中文](./README.zh-CN.md)
+
 > Turn your GitHub contributions into a Stardew Valley-style pixel farm
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -8,14 +10,40 @@
 
 GitHub Farm visualizes your GitHub contribution data as a **Stardew Valley-style pixel farm**:
 
-- Commits = Planting - more commits, crops grow from seed to harvest
-- Buildings = Achievements - unlock barn, windmill, fences with streaks
-- Animals = Activity - more active days, livelier farm
-- Trees = Languages - different languages grow into different trees
+- Commits = Crops - weekly contributions sorted left-to-right, growing from seed to harvest
+- Trees = Languages - your top programming languages appear as trees on the grassland
+- Animals = PRs - merged pull requests bring animals to your farm
+- Decorations = Issues - issue participation adds flowers and decorations
 
 ## Quick Start
 
-### As GitHub Action (Recommended)
+### Local Development
+
+```bash
+npm install
+npm run dev      # Start dev server with live preview (mock data by default)
+```
+
+To use real GitHub data, set your token:
+
+```bash
+# Windows PowerShell
+$env:GITHUB_TOKEN="ghp_your_token_here"; npm run dev
+
+# macOS / Linux
+GITHUB_TOKEN=ghp_your_token npm run dev
+```
+
+The dev server generates a PNG, starts a local HTTP server at `http://localhost:3000`, and opens your browser automatically. Edit code → Ctrl+C → `npm run dev` to refresh.
+
+### Generate PNG only
+
+```bash
+npm run build          # Generate with mock data → dist/farm.png
+npm run build:real     # Generate with real data (requires GITHUB_TOKEN)
+```
+
+### As GitHub Action
 
 Add workflow to your `username/username` repo:
 
@@ -32,69 +60,67 @@ jobs:
       - uses: YeatsLiao/github-farm@main
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          output: farm.svg
+          output: farm.png
           theme: stardew
-```
-
-### Local Development
-
-```bash
-npm install
-npm run dev      # Start dev server with live preview
-npm run build    # Generate SVG/PNG
 ```
 
 ## Data Mapping
 
 | GitHub Data | Farm Element | Description |
 |---|---|---|
-| Daily commits | Crop growth | 0=empty, 1=seed, 2=sprout, 3=growing, 4+=harvest |
-| Streak days | Farm expansion | Unlock new areas and buildings |
-| Language distribution | Tree types | Java=oak, Python=willow, JS=maple |
-| PR merges | Animals appear | Farm becomes more alive |
-| Issue participation | Flowers/decorations | Farm embellishments |
-| Total contributions | Season changes | Spring/Summer/Autumn/Winter visuals |
+| Weekly contributions (sorted) | Crop growth stage | 5 stages: seed → sprout → growing → tall → harvest |
+| Top programming languages | Trees | Each language = one tree, up to 5 |
+| Merged PRs | Animals | 1 animal per 8 PRs, up to 5 |
+| Issue participation | Decorations | 1 decoration per 6 issues, up to 4 |
+| Streak ≥ 30 days | Scarecrow | Placed at field edge |
 
 ## Project Structure
 
 ```
 github-farm/
-- src/
-  - index.js           # Main entry
-  - fetcher.js         # GitHub API data fetching
-  - renderer.js        # SVG scene renderer
-  - farm-layout.js     # Farm layout algorithm
-  - themes/
-    - stardew.js       # Stardew Valley theme config
-- assets/
-  - sprites/           # Pixel sprites (crops, buildings, characters, animals)
-  - scenes/            # Scene templates
-- dist/                # Build output
-- .github/
-  - workflows/
-    - farm.yml         # GitHub Action definition
-- package.json
-- README.md
+├── src/
+│   ├── index.js           # Main entry + CLI
+│   ├── fetcher.js         # GitHub GraphQL API + mock data
+│   ├── renderer.js        # Canvas pixel-art renderer
+│   ├── farm-layout.js     # Farm layout algorithm
+│   └── themes/
+│       └── stardew.js     # Stardew Valley theme config
+├── assets/
+│   ├── sprites/cropped/   # Individual pixel sprites (crops, trees, animals)
+│   └── scenes/            # Background image
+├── dev-server.mjs         # Local dev server with live preview
+├── dist/                  # Build output (PNG)
+├── docs/
+│   ├── PRD.md             # Product requirements
+│   ├── ARCHITECTURE.md    # Architecture design
+│   └── DEVLOG.md          # Dev notes & pitfalls
+└── package.json
 ```
 
 ## Tech Stack
 
-- Node.js - Runtime
-- SVG - Render output (embeddable in any Markdown)
-- GitHub API - Fetch contribution data
-- GitHub Actions - Automation
+- **Node.js** - Runtime
+- **Canvas** (npm `canvas`) - Pixel-art PNG rendering
+- **GitHub GraphQL API** - Contribution data
+- **GitHub Actions** - Automation (planned)
 
 ## Roadmap
 
-- [x] Project init and docs
-- [ ] Pixel art sprite assets
-- [ ] GitHub API data fetcher
-- [ ] SVG render engine
-- [ ] Farm layout algorithm
-- [ ] Stardew Valley theme
+- [x] Canvas pixel-art renderer
+- [x] 5-stage crop system with sorted column layout
+- [x] Trees, animals, decorations from GitHub stats
+- [x] Local dev server with live preview
 - [ ] GitHub Action wrapper
 - [ ] Multi-theme support (4 seasons)
 - [ ] Online preview/config tool
+
+## Documentation
+
+| Doc | Description |
+|-----|-------------|
+| [PRD.md](./docs/PRD.md) | Product requirements — features, user scenarios, competitors |
+| [ARCHITECTURE.md](./docs/ARCHITECTURE.md) | Architecture — module design, data flow, extension points |
+| [DEVLOG.md](./docs/DEVLOG.md) | Dev log — renderer iterations, pitfalls |
 
 ## License
 
