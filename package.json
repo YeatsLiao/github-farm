@@ -5,9 +5,9 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "dev": "node src/index.js --mock",
+    "dev": "node dev-server.mjs",
     "build": "node src/index.js --mock",
-    "preview": "npx serve dist"
+    "build:real": "node src/index.js"
   },
   "keywords": [
     "github",
