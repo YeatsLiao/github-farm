@@ -15,23 +15,23 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /**
- * 生成农场 SVG
+ * 生成农场 PNG
  * @param {Object} options
  * @param {string} options.username - GitHub 用户名
  * @param {string} options.token - GitHub PAT（可选）
  * @param {string} options.output - 输出文件路径
- * @param {number} options.width - SVG 宽度
- * @param {number} options.height - SVG 高度
+ * @param {number} options.width - 画布宽度
+ * @param {number} options.height - 画布高度
  * @param {boolean} options.mock - 使用模拟数据
- * @returns {Promise<string>} SVG 字符串
+ * @returns {Promise<Buffer>} PNG 数据
  */
 export async function generateFarm(options = {}) {
   const {
     username = 'YeatsLiao',
     token = process.env.GITHUB_TOKEN || '',
-    output = resolve(__dirname, '../dist/farm.svg'),
-    width = 800,
-    height = 400,
+    output = resolve(__dirname, '../dist/farm.png'),
+    width = 1216,
+    height = 832,
     mock = false,
   } = options;
 
@@ -50,19 +50,19 @@ export async function generateFarm(options = {}) {
   console.log(`[farm] Season: ${farmData.season}`);
   console.log(`[farm] Languages: ${farmData.languages.map(l => l.name).join(', ')}`);
 
-  // 2. 构建场景
-  const elements = buildScene(farmData);
+  // 2. 构建场景 (传入用户名作为伪随机种子)
+  const elements = buildScene(farmData, { username });
   console.log(`[farm] Scene elements: ${elements.length}`);
 
-  // 3. 渲染 SVG
-  const svg = renderScene(elements, width, height);
+  // 3. 渲染 PNG (Canvas)
+  const png = await renderScene(elements, width, height, true);
 
   // 4. 写入文件
   mkdirSync(dirname(output), { recursive: true });
-  writeFileSync(output, svg, 'utf-8');
-  console.log(`[farm] SVG saved to: ${output}`);
+  writeFileSync(output, png);
+  console.log(`[farm] PNG saved to: ${output} (${(png.length / 1024).toFixed(1)} KB)`);
 
-  return svg;
+  return png;
 }
 
 // CLI 入口
@@ -101,9 +101,9 @@ GitHub Farm - 贡献可视化农场
 选项:
   --username <name>   GitHub 用户名 (默认: YeatsLiao)
   --token <token>     GitHub PAT (或使用 GITHUB_TOKEN 环境变量)
-  --output <path>     输出文件路径 (默认: dist/farm.svg)
-  --width <px>        SVG 宽度 (默认: 800)
-  --height <px>       SVG 高度 (默认: 400)
+  --output <path>     输出文件路径 (默认: dist/farm.png)
+  --width <px>        画布宽度 (默认: 1216)
+  --height <px>       画布高度 (默认: 832)
   --mock              使用模拟数据（开发调试用）
   --help, -h          显示帮助
 

@@ -5,7 +5,7 @@
  * and returns structured data for farm visualization.
  */
 
-const GITHUB_GRAPHQL_URL = 'https://api.github.com/graphlq';
+const GITHUB_GRAPHQL_URL = 'https://api.github.com/graphql';
 
 const CONTRIBUTION_QUERY = `
   query($username: String!) {
@@ -138,10 +138,10 @@ export function generateMockData() {
     const days = [];
     for (let d = 0; d < 7; d++) {
       const r = Math.random();
-      const count = r < 0.25 ? 0 : r < 0.45 ? Math.floor(Math.random() * 3) + 1
-        : r < 0.65 ? Math.floor(Math.random() * 4) + 4
-        : r < 0.85 ? Math.floor(Math.random() * 5) + 7
-        : Math.floor(Math.random() * 10) + 11;
+      const count = r < 0.35 ? 0 : r < 0.55 ? Math.floor(Math.random() * 3) + 1
+        : r < 0.75 ? Math.floor(Math.random() * 3) + 3
+        : r < 0.90 ? Math.floor(Math.random() * 3) + 6
+        : Math.floor(Math.random() * 4) + 9;
       totalContributions += count;
       days.push({
         count, date: new Date(2025, 0, 1 + w * 7 + d).toISOString().split('T')[0],
