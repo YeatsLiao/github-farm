@@ -9,7 +9,14 @@
     "build": "node src/index.js --mock",
     "preview": "npx serve dist"
   },
-  "keywords": ["github", "contribution", "visualization", "pixel-art", "stardew-valley", "farm"],
+  "keywords": [
+    "github",
+    "contribution",
+    "visualization",
+    "pixel-art",
+    "stardew-valley",
+    "farm"
+  ],
   "author": "YeatsLiao",
   "license": "MIT",
   "repository": {
@@ -18,5 +25,8 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "canvas": "^3.2.3"
   }
 }

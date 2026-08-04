@@ -1,56 +1,18 @@
 ﻿import { SEASON_THEMES, FARM_CONFIG, CROP_STAGES, LANGUAGE_TREES } from './themes/stardew.js';
 
 const RAW_BASE = 'https://raw.githubusercontent.com/YeatsLiao/github-farm/main/assets';
-const SPRITESHEET_URL = RAW_BASE + '/sprites/farm-spritesheet.png';
+const SPRITE_DIR = RAW_BASE + '/sprites/individual';
 const FARMER_URL = RAW_BASE + '/sprites/farmer.png';
 
-const SS_W = 1024, SS_H = 768;
-const COLS = 7, ROWS = 5;
-const CELL_W = Math.floor(SS_W / COLS);
-const CELL_H = Math.floor(SS_H / ROWS);
-
-const SPRITE_MAP = {
-  'crop-seed':     { row: 0, col: 0 },
-  'crop-sprout':   { row: 0, col: 1 },
-  'crop-growing':  { row: 0, col: 2 },
-  'crop-harvest':  { row: 0, col: 3 },
-  'barn':          { row: 1, col: 0 },
-  'fence':         { row: 1, col: 1 },
-  'windmill':      { row: 1, col: 2 },
-  'well':          { row: 1, col: 3 },
-  'oak-tree':      { row: 2, col: 0 },
-  'willow-tree':   { row: 2, col: 1 },
-  'maple-tree':    { row: 2, col: 2 },
-  'pine-tree':     { row: 2, col: 3 },
-  'chicken':       { row: 3, col: 0 },
-  'cow':           { row: 3, col: 1 },
-  'cat':           { row: 3, col: 2 },
-  'dog':           { row: 3, col: 3 },
-  'sunflower':     { row: 4, col: 0 },
-  'pumpkin':       { row: 4, col: 1 },
-  'carrot':        { row: 4, col: 2 },
-  'tomato':        { row: 4, col: 3 },
-  'watering-can':  { row: 4, col: 4 },
-  'scarecrow':     { row: 4, col: 5 },
-};
-
-function getClipId(name) { return 'clip-' + name; }
-
-function renderClipDefs() {
-  let defs = '';
-  for (const [name, pos] of Object.entries(SPRITE_MAP)) {
-    const x = pos.col * CELL_W;
-    const y = pos.row * CELL_H;
-    defs += '<clipPath id="' + getClipId(name) + '"><rect x="' + x + '" y="' + y + '" width="' + CELL_W + '" height="' + CELL_H + '"/></clipPath>\n';
-  }
-  return defs;
-}
-
-function spriteImg(name, px, py, pw, ph) {
-  return '<image href="' + SPRITESHEET_URL + '" x="' + px + '" y="' + py + '" width="' + pw + '" height="' + ph + '" preserveAspectRatio="none" clip-path="url(#' + getClipId(name) + ')"/>';
+function spriteUrl(name) {
+  return SPRITE_DIR + '/' + name + '.png';
 }
 
 function toAbs(rel, total) { return Math.round(rel * total); }
+
+function imgTag(url, x, y, w, h, aspect) {
+  return '<image href="' + url + '" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" preserveAspectRatio="' + (aspect || 'none') + '"/>';
+}
 
 export function renderScene(elements, width, height) {
   width = width || 800;
@@ -64,7 +26,6 @@ export function renderScene(elements, width, height) {
   svg += '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' + width + '" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '">\n';
   svg += '<defs>\n';
   svg += '<linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="' + theme.skyTop + '"/><stop offset="100%" stop-color="' + theme.skyBottom + '"/></linearGradient>\n';
-  svg += renderClipDefs();
   svg += '</defs>\n';
   svg += '<rect width="' + width + '" height="' + height + '" fill="url(#skyGrad)"/>\n';
   svg += '<rect y="' + fenceY + '" width="' + width + '" height="' + (height - fenceY) + '" fill="' + theme.grass + '"/>\n';
@@ -79,54 +40,47 @@ export function renderScene(elements, width, height) {
         const cw = el.width || 40;
         const ch = el.height || 40;
         svg += '<rect x="' + px + '" y="' + py + '" width="' + cw + '" height="' + ch + '" fill="' + soilColor + '" rx="2"/>\n';
-        if (stage.sprite !== 'soil-empty' && SPRITE_MAP[stage.sprite]) {
-          svg += spriteImg(stage.sprite, px, py, cw, ch) + '\n';
+        if (stage.sprite !== 'soil-empty') {
+          svg += imgTag(spriteUrl(stage.sprite), px, py, cw, ch) + '\n';
         }
         break;
       }
       case 'tree': {
         const treeInfo = LANGUAGE_TREES[el.language] || LANGUAGE_TREES.default;
         const sprite = treeInfo.name;
-        if (SPRITE_MAP[sprite]) {
-          const tw = el.width || 64;
-          const th = el.height || 96;
-          svg += spriteImg(sprite, px - tw / 2, py - th, tw, th) + '\n';
-        }
+        const tw = el.width || 64;
+        const th = el.height || 96;
+        svg += imgTag(spriteUrl(sprite), px - tw / 2, py - th, tw, th, 'xMidYMax meet') + '\n';
         break;
       }
       case 'building': {
         const labelMap = { 'Red Barn': 'barn', 'Wooden Fence': 'fence', 'Windmill': 'windmill', 'Stone Well': 'well', 'Scarecrow': 'scarecrow' };
         const sprite = labelMap[el.desc];
-        if (sprite && SPRITE_MAP[sprite]) {
+        if (sprite) {
           const bw = el.width || 80;
           const bh = el.height || 80;
-          svg += spriteImg(sprite, px - bw / 2, py - bh / 2, bw, bh) + '\n';
+          svg += imgTag(spriteUrl(sprite), px - bw / 2, py - bh / 2, bw, bh, 'xMidYMid meet') + '\n';
         }
         break;
       }
       case 'animal': {
-        const animals = ['chicken', 'cow', 'cat', 'dog'];
-        const animalTypes = ["chicken","cow","cat","dog"]; const sprite = el.animalType && animalTypes.includes(el.animalType) ? el.animalType : animalTypes[0];
-        if (SPRITE_MAP[sprite]) {
-          const aw = el.width || 48;
-          const ah = el.height || 48;
-          svg += spriteImg(sprite, px - aw / 2, py - ah / 2, aw, ah) + '\n';
-        }
+        const sprite = el.animalType || 'chicken';
+        const aw = el.width || 48;
+        const ah = el.height || 48;
+        svg += imgTag(spriteUrl(sprite), px - aw / 2, py - ah / 2, aw, ah, 'xMidYMid meet') + '\n';
         break;
       }
       case 'decoration': {
-        const decors = ['sunflower', 'pumpkin', 'carrot', 'tomato'];
-        const decorTypes = ["sunflower","pumpkin","carrot","tomato"]; const sprite = el.decorationType === "flower" ? decorTypes[Math.floor(Math.random() * decorTypes.length)] : (decorTypes.includes(el.decorationType) ? el.decorationType : decorTypes[0]);
-        if (SPRITE_MAP[sprite]) {
-          const ds = el.width || 32;
-          svg += spriteImg(sprite, px - ds / 2, py - ds / 2, ds, ds) + '\n';
-        }
+        const decorMap = { 'flower': 'sunflower', 'pumpkin': 'pumpkin', 'carrot': 'carrot', 'tomato': 'tomato' };
+        const sprite = decorMap[el.decorationType] || 'sunflower';
+        const ds = el.width || 32;
+        svg += imgTag(spriteUrl(sprite), px - ds / 2, py - ds / 2, ds, ds, 'xMidYMid meet') + '\n';
         break;
       }
       case 'character': {
         const cw = el.width || 64;
         const ch = el.height || 96;
-        svg += '<image href="' + FARMER_URL + '" x="' + (px - cw / 2) + '" y="' + (py - ch) + '" width="' + cw + '" height="' + ch + '" preserveAspectRatio="xMidYMax meet"/>\n';
+        svg += imgTag(FARMER_URL, px - cw / 2, py - ch, cw, ch, 'xMidYMax meet') + '\n';
         break;
       }
     }
