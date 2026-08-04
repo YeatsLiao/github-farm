@@ -15,6 +15,16 @@ GitHub Farm 把你的 GitHub 贡献数据可视化为**星露谷物语风格的�
 - **动物 = PR** — 合并的 Pull Request 为农场带来动物
 - **装饰 = Issue** — 参与 Issue 讨论为农场添加花朵和装饰
 
+## 预览
+
+**农场场景** — 作物从左到右依次生长：
+
+![Farm Concept](./docs/images/farm-concept.png)
+
+**精灵图** — 作物、树木、动物、建筑和工具的像素风素材：
+
+![Sprite Sheet](./docs/images/sprite-sheet.png)
+
 ## 快速开始
 
 ### 本地开发
