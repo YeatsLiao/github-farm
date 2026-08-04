@@ -15,6 +15,16 @@ GitHub Farm visualizes your GitHub contribution data as a **Stardew Valley-style
 - Animals = PRs - merged pull requests bring animals to your farm
 - Decorations = Issues - issue participation adds flowers and decorations
 
+## Preview
+
+**Farm Scene** — crops grow from seed to harvest, left to right:
+
+![Farm Concept](./docs/images/farm-concept.png)
+
+**Sprite Sheet** — pixel-art assets for crops, trees, animals, buildings and tools:
+
+![Sprite Sheet](./docs/images/sprite-sheet.png)
+
 ## Quick Start
 
 ### Local Development
