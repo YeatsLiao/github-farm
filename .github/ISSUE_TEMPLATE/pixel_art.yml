@@ -1,0 +1,45 @@
+name: 🎨 Pixel Art Contribution
+description: Share pixel art sprites, themes, or visual improvements
+title: "[Art]: "
+labels: ["pixel-art"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Want to help improve the visual style? 🎨
+  - type: dropdown
+    id: contribution_type
+    attributes:
+      label: What type of art contribution?
+      multiple: true
+      options:
+        - New crop sprites
+        - New tree sprites
+        - New animal sprites
+        - Building/decoration sprites
+        - Seasonal theme (winter/autumn/spring)
+        - Background scene improvement
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe your art contribution
+    validations:
+      required: true
+  - type: textarea
+    id: specs
+    attributes:
+      label: Technical specs
+      description: Dimensions, format, color palette used
+      placeholder: |
+        - Sprite size: 16x16 or 32x32
+        - Format: PNG with transparency
+        - Color palette: ...
+  - type: textarea
+    id: preview
+    attributes:
+      label: Preview
+      description: Attach preview images or mockups
