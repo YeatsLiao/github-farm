@@ -5,6 +5,10 @@
 > 把 GitHub 贡献数据变成一座星露谷风格的像素农场
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
+[![GitHub Stars](https://img.shields.io/github/stars/YeatsLiao/github-farm?style=social)](https://github.com/YeatsLiao/github-farm/stargazers)
+
+> 🌱 **项目还在早期阶段，正在寻找贡献者！** 如果你觉得这个想法有意思，[给个 Star](https://github.com/YeatsLiao/github-farm)、[提个 Issue](https://github.com/YeatsLiao/github-farm/issues/new)、或者发个 PR —— 每一份帮助都很重要。查看 [CONTRIBUTING.md](./CONTRIBUTING.md) 了解如何参与。
 
 ## 这是什么？
 

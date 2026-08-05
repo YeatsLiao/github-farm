@@ -1,10 +1,14 @@
-﻿# GitHub Farm
+# GitHub Farm
 
 **English** | [中文](./README.zh-CN.md)
 
 > Turn your GitHub contributions into a Stardew Valley-style pixel farm
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
+[![GitHub Stars](https://img.shields.io/github/stars/YeatsLiao/github-farm?style=social)](https://github.com/YeatsLiao/github-farm/stargazers)
+
+> 🌱 **This project is early-stage and looking for contributors!** If you think this idea is cool, [star it](https://github.com/YeatsLiao/github-farm), [open an issue](https://github.com/YeatsLiao/github-farm/issues/new), or send a PR — every bit of help counts. See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to get started.
 
 ## What is this?
 
