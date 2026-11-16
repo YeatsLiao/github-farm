@@ -21,7 +21,7 @@ body:
       description: How can we reproduce this issue?
       placeholder: |
         1. Run `npm run build -- --repo OWNER/REPO`
-        2. Open `dist/pages/index.html`, or share the affected Pages URL
+        2. Share the affected Pages URL or the repository name you entered
         3. Describe what the card shows
     validations:
       required: true

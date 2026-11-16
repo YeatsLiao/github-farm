@@ -14,7 +14,7 @@ test/       农场生成与图片服务测试
 - 改仓库数据或 Star 统计，查看 [repository-stars.js](../src/repository-stars.js)。
 - 改农场初始布局、成长档位或地物坐标，查看 [src/farm/](../src/farm/)。
 - 改地面、精灵合成或卡片排版，查看 [src/render/](../src/render/)。
-- 改 Pages 页面，编辑 [pages.html](../scripts/pages.html)。发布入口是 [build-pages.mjs](../scripts/build-pages.mjs)。
+- 改 Pages 生成器，编辑 [pages.html](../scripts/pages.html) 和 [pages.js](../scripts/pages.js)。[build-pages.mjs](../scripts/build-pages.mjs) 发布生成器和默认 PNG，浏览器与 Node 复用 [卡片绘制逻辑](../src/render/draw-card.js)。
 - 改素材先看[素材规范](ASSETS.md)。新增代码和脚本使用小写短横线文件名，文件按实际职责归入现有目录。
 
 ## 农场生成
