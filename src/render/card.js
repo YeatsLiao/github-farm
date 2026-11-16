@@ -15,6 +15,26 @@ export async function renderStarCard(scene, options) {
   return canvas.toBuffer('image/png');
 }
 
+export async function renderFarmIcon() {
+  const {atlas, manifest} = await assets();
+  const [x, y, width, height] = manifest.sprites.sprout.rect;
+  const size = 32;
+  const canvas = createCanvas(size, size);
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
+  ctx.fillStyle = '#3d522d';
+  ctx.fillRect(0, 4, 32, 24);
+  ctx.fillRect(4, 0, 24, 32);
+  ctx.fillStyle = '#f7efd9';
+  ctx.fillRect(2, 5, 28, 22);
+  ctx.fillRect(5, 2, 22, 28);
+  const drawWidth = width * 2;
+  const drawHeight = height * 2;
+  ctx.drawImage(atlas, x, y, width, height,
+    Math.floor((size - drawWidth) / 2), Math.floor((size - drawHeight) / 2), drawWidth, drawHeight);
+  return canvas.toBuffer('image/png');
+}
+
 export function renderStarError(message) {
   const canvas = createCanvas(640, 160);
   const ctx = canvas.getContext('2d');

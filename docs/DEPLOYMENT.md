@@ -1,6 +1,6 @@
 # Actions + Pages 部署
 
-`Publish Star Farm` 将生成器和默认仓库的 `farm.png` 一起发布到 GitHub Pages。在线生成器在浏览器里读取所选公开仓库的数据，生成后可下载 PNG，或分享带 `?repo=OWNER/REPO` 的页面地址。
+`Publish Star Farm` 将生成器和默认仓库的 `farm.png` 一起发布到 GitHub Pages。默认仓库的统计随发布写入 `snapshot.json`，主页打开时可直接进入农场。指定其他公开仓库时，生成器在浏览器读取 GitHub 数据，支持分享带 `?repo=OWNER/REPO` 的页面地址。成长预览会标明档位，PNG 下载使用当前真实 Stars。
 
 ## 发布可自动更新的 README 图片
 

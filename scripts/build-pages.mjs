@@ -4,7 +4,8 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { createStarterScene } from '../src/farm/scene.js';
 import { fetchRepositoryStars } from '../src/repository-stars.js';
-import { renderStarCard } from '../src/render/card.js';
+import { renderFarmIcon, renderStarCard } from '../src/render/card.js';
+import { renderOrchardComparison } from './preview-farms.mjs';
 
 const root = new URL('../', import.meta.url);
 const output = new URL('dist/pages/', root);
@@ -16,6 +17,7 @@ const browserFiles = [
   ['src/farm'],
   ['src/render/draw-card.js'],
   ['src/render/ground.js'],
+  ['src/render/props.js'],
   ['assets/runtime'],
 ];
 
@@ -36,6 +38,9 @@ try {
   const png = await renderStarCard(createStarterScene(snapshot));
   await mkdir(output, { recursive: true });
   await writeFile(new URL('farm.png', output), png);
+  await writeFile(new URL('snapshot.json', output), JSON.stringify(snapshot));
+  await writeFile(new URL('favicon.png', output), await renderFarmIcon());
+  await writeFile(new URL('orchard-growth.png', output), await renderOrchardComparison());
   await copyBrowserFiles();
   console.log(`Built dist/pages/ for ${snapshot.fullName} (${snapshot.stars} stars)`);
 } catch (error) {

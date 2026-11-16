@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {renderStarCard} from '../src/render/card.js';
 import {createStarterScene, farmMilestones, starterMilestones} from '../src/farm/scene.js';
+import {activityFrame} from '../src/farm/yard.js';
+import {yardProps} from '../src/render/props.js';
 const manifest=JSON.parse(await readFile(new URL('../assets/runtime/spring-manifest.json',import.meta.url),'utf8'));
 const snapshot=(id,stars)=>({repositoryId:id,fullName:'sample/repository',stars,newStars7d:12,fetchedAt:'2026-11-06 08:00 UTC'});
 
@@ -16,7 +18,10 @@ test('approved starter layouts keep their theme and existing anchors through ear
    const current = createStarterScene({...snapshot(id, stars), fullName: 'sample/renamed'});
    assert.equal(current.theme, previous.theme);
    assert.ok(current.objects.length > previous.objects.length);
-   assert.deepEqual(current.objects.slice(0, previous.objects.length), previous.objects);
+   assert.deepEqual(
+    current.objects.slice(0, previous.objects.length).map(({id,x,y}) => [id,x,y]),
+    previous.objects.map(({id,x,y}) => [id,x,y]),
+   );
    assert.equal(createStarterScene(snapshot(id, stars - 1)).stage.number, previous.stage.number);
    previous = current;
   }
@@ -33,7 +38,7 @@ test('starter layouts use published sprites and render reproducible 1280 by 960 
   rendered.add(scene.theme);
   for (const stars of farmMilestones) {
    for (const object of createStarterScene(snapshot(id, stars)).objects) {
-    if (object.type !== 'fence-side') assert.ok(manifest.sprites[object.type], object.type);
+    if (object.type !== 'fence-side') assert.ok(manifest.sprites[object.type] || yardProps[object.type], object.type);
    }
   }
   const png = await renderStarCard(scene);
@@ -43,6 +48,33 @@ test('starter layouts use published sprites and render reproducible 1280 by 960 
   assert.ok(png.length < 1_500_000);
  }
  assert.equal(rendered.size, 3);
+});
+
+test('the orchard connects its fruit trees, table, shed and dock at their milestones', () => {
+ const at = stars => createStarterScene(snapshot('18221276', stars));
+ const initial = at(0), ripe = at(5), table = at(25), jam = at(100), dock = at(300);
+ assert.equal(initial.theme, 'creek-orchard');
+ const tree = scene => scene.objects.find(object => object.id === 'young-fruit');
+ assert.equal(tree(initial).type, 'oak');
+ assert.ok(['apple', 'orange'].includes(tree(ripe).type));
+ assert.deepEqual([tree(initial).x,tree(initial).y], [tree(ripe).x,tree(ripe).y]);
+ assert.ok(table.objects.some(object => object.type === 'harvest-table'));
+ assert.ok(jam.objects.some(object => object.id === 'jam-shed'));
+ assert.ok(jam.blueprint.routes.some(route => route.id === 'jam-yard'));
+ assert.ok(dock.objects.some(object => object.type === 'dock-post'));
+ assert.ok(dock.blueprint.routes.some(route => route.id === 'new-orchard'));
+ assert.equal(dock.places.find(place => place.id === 'dock').at, 300);
+
+ const { activity } = dock;
+ const [px, py, rx, ry] = dock.blueprint.pond;
+ for (let time = 0; time <= 14; time += .2) {
+  const [farmer, ...actors] = activityFrame(activity, time);
+  assert.ok(((farmer.x - px) / rx) ** 2 + ((farmer.y - py) / ry) ** 2 > 1);
+  const duck = actors.find(actor => actor.type === 'duck');
+  assert.ok(((duck.x - px) / rx) ** 2 + ((duck.y - py) / ry) ** 2 < 1);
+ }
+ assert.ok(activityFrame(activity, 2).some(actor => actor.type === 'basket'));
+ assert.ok(!activityFrame(activity, 10).some(actor => actor.type === 'basket'));
 });
 
 test('each approved terrain grows through the full schedule and unlocks a windmill at 5000', () => {

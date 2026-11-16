@@ -1,6 +1,7 @@
 import { starterThemes, starterViewport } from './layouts.js';
 import { farmExpansions } from './expansions.js';
-import { seedOf } from './seed.js';
+import { randomFor, seedOf } from './seed.js';
+import { describeYard } from './yard.js';
 
 export const starterMilestones = [0, 1, 5, 10, 25, 50, 100, 200, 300];
 export const farmMilestones = [...starterMilestones, ...Array.from({length: 47}, (_, index) => 400 + index * 100)];
@@ -12,9 +13,9 @@ const additions = {
     [['sprout', 197, 234, .82]],
     [['daisy', 204, 280, .85], ['sunflower', 96, 245, .8]],
     [['crate', 191, 207, .72]],
-    [['bench', 330, 204, .7]],
+    [['harvest-table', 219, 216], ['basket', 208, 224]],
     [['barrel', 305, 195, .73]],
-    [['scarecrow', 211, 267, .82]],
+    [['drying-rack', 178, 204], ['scarecrow', 211, 267, .82]],
     [['barrel', 480, 259, .83], ['crate', 502, 267, .83]],
     [['carrot', 488, 292, .88], ['tomato', 508, 291, .88], ['pumpkin', 528, 292, .84]],
   ],
@@ -22,21 +23,37 @@ const additions = {
     [['crate', 236, 218, .67]],
     [['daisy', 164, 232, .8], ['hydrangea', 201, 260, .72]],
     [['barrel', 178, 217, .7]],
-    [['orange', 311, 135, .74]],
+    [['harvest-table', 253, 216], ['basket', 268, 223]],
     [['crate', 268, 244, .72]],
-    [['well', 431, 230, .84]],
-    [['apple', 515, 197, .87], ['orange', 545, 156, .84]],
+    [['coop', 290, 171, .63, 'jam-shed'], ['jam-sign', 309, 178]],
     [['bench', 529, 227, .86], ['crate', 551, 233, .83]],
+    [['apple', 515, 197, .87], ['orange', 545, 172, .84], ['dock-post', 135, 218], ['dock-post', 136, 229]],
   ],
   'barnyard-pasture': [
     [['chicken', 395, 239, .74]],
     [['daisy', 301, 271, .78], ['sunflower', 364, 279, .77]],
     [['crate', 350, 244, .7]],
-    [['barrel', 418, 180, .76]],
+    [['harvest-table', 280, 226], ['basket', 278, 232]],
     [['chicken', 394, 194, .84]],
-    [['crate', 294, 198, .79]],
+    [['feed-bin', 289, 209], ['crate', 304, 207, .68]],
     [['coop', 529, 180, .87], ['barrel', 549, 194, .74]],
     [['fence', 491, 248, .87], ['fence', 516, 248, .87], ['fence', 541, 248, .87], ['chicken', 527, 224, .86]],
+  ],
+};
+
+const yardPaths = {
+  'cottage-garden': [
+    {at: 100, route: {id: 'drying-yard', points: [[180, 212], [196, 210], [232, 204]]}},
+  ],
+  'creek-orchard': [
+    {at: 0, route: {id: 'picking-path', points: [[156, 174], [157, 202], [156, 223]]}},
+    {at: 25, route: {id: 'harvest-path', points: [[253, 226], [232, 238]]}},
+    {at: 100, route: {id: 'jam-yard', points: [[290, 178], [292, 200], [284, 226]]}, surface: {x: 273, y: 173, width: 36, height: 16, material: 'stone'}},
+    {at: 300, surface: {x: 134, y: 216, width: 28, height: 14, material: 'wood'}},
+    {at: 300, route: {id: 'new-orchard', points: [[531, 184], [537, 207], [528, 229]]}},
+  ],
+  'barnyard-pasture': [
+    {at: 100, route: {id: 'feed-yard', points: [[288, 216], [278, 225], [278, 241]]}, surface: {x: 278, y: 207, width: 28, height: 15, material: 'wood'}},
   ],
 };
 
@@ -57,10 +74,30 @@ const expansion = {
 };
 
 function propsAt(entries, prefix) {
-  return entries.map(([type, x, y, scale = 1], index) => ({
-    id: prefix === 'starter' && type === 'coop' ? 'livestock' : type === 'well' ? 'well' : `${prefix}-${index}`,
+  return entries.map(([type, x, y, scale = 1, id], index) => ({
+    id: id ?? (prefix === 'starter' && type === 'coop' ? 'livestock' : type === 'well' ? 'well' : `${prefix}-${index}`),
     type, x, y, scale, ground: type !== 'waterlily' && type !== 'duck',
   }));
+}
+
+function growStarterPlants(objects, theme, stars, seed) {
+  const random = randomFor(seed, 'garden-variety');
+  const fruit = random() < .5 ? 'apple' : 'orange';
+  const crops = theme === 'barnyard-pasture' ? ['wheat', 'carrot'] : ['tomato', 'carrot', 'pumpkin'];
+  const primary = crops[Math.floor(random() * crops.length)];
+  for (const object of objects) {
+    if (object.id === 'young-fruit') {
+      object.type = stars >= 5 ? fruit : 'oak';
+      object.scale = stars >= 5 ? .91 : .52;
+    } else if (object.id === 'bed-0-crop-0-0') {
+      object.type = stars >= 5 ? primary : 'sprout';
+    } else if (object.id.startsWith('bed-') && random() < .22 && object.type !== 'daisy') {
+      object.type = primary;
+    } else if (['daisy', 'fern', 'berry'].includes(object.type) && !object.id.startsWith('bed-')) {
+      object.x += Math.floor(random() * 5) - 2;
+      object.y += Math.floor(random() * 5) - 2;
+    }
+  }
 }
 
 function extendFarm(layout, theme, stars, objects, beds, routes, surfaces) {
@@ -133,6 +170,7 @@ export function createStarterScene(snapshot) {
   const beds = [...theme.beds];
   const yardSurfaces = [...(theme.yardSurfaces ?? [])];
   const routes = [...theme.routes];
+  growStarterPlants(objects, theme.slug, stageStars, seed);
   for (let index = 0; index < Math.min(phase, starterMilestones.length - 1); index++) {
     objects.push(...propsAt(additions[theme.slug][index], `growth-${starterMilestones[index + 1]}`));
   }
@@ -141,16 +179,23 @@ export function createStarterScene(snapshot) {
     yardSurfaces.push(yard.surface);
     if (yard.bed) beds.push(yard.bed);
   }
+  for (const {at, route, surface} of yardPaths[theme.slug]) {
+    if (stageStars < at) continue;
+    if (route) routes.push(route);
+    if (surface) yardSurfaces.push(surface);
+  }
   const extended = stageStars >= 400;
   if (extended) extendFarm(farmExpansions[theme.slug], theme.slug, stageStars, objects, beds, routes, yardSurfaces);
+  const blueprint = {
+    seed, home: theme.home, well: theme.well, pond: theme.pond, gate: theme.gate,
+    livestock: theme.livestock, reserved: [], routes,
+  };
   return {
     theme: theme.slug,
     snapshot,
     viewport: extended ? {x: 0, y: 0, width: 640, height: 360} : opened ? {x: 41, y: 39, width: 544, height: 306} : starterViewport,
-    blueprint: {
-      seed, home: theme.home, well: theme.well, pond: theme.pond, gate: theme.gate,
-      livestock: theme.livestock, reserved: [], routes,
-    },
+    blueprint,
+    ...describeYard(theme.slug, stageStars, objects, beds, blueprint),
     objects, beds, yardSurfaces, livestock: Boolean(theme.livestock),
     stage: {
       number: phase + 1, total: farmMilestones.length,

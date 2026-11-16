@@ -6,11 +6,13 @@
 
 在[在线生成器](https://yeatsliao.github.io/github-farm/)输入任意公开仓库的 `OWNER/REPO`，也可以粘贴 GitHub 仓库链接。[试试 octocat/git-consortium](https://yeatsliao.github.io/github-farm/?repo=octocat%2Fgit-consortium)。
 
+点击农场里的标记可以查看地点用途和解锁条件，也可以拖动成长时间轴，看同一个仓库如何生长。农夫和动物会活动，可以随时暂停。[溪边果园五阶段对照](https://yeatsliao.github.io/github-farm/orchard-growth.png)。
+
 [![GitHub Farm 农场及 Star 统计](https://yeatsliao.github.io/github-farm/farm.png)](https://yeatsliao.github.io/github-farm/)
 
 ## 放进 README
 
-生成后可分享页面地址或下载 PNG。复制这一行即可嵌入本仓库的示例卡片。要让自己仓库的 README 卡片定期更新，请按 [Pages 部署指南](DEPLOYMENT.md) 设置。
+生成后可分享页面地址或下载当前真实档位的 PNG。复制这一行即可嵌入本仓库的示例卡片。要让自己仓库的 README 卡片定期更新，请按 [Pages 部署指南](DEPLOYMENT.md) 设置。
 
 ```markdown
 [![GitHub Farm](https://yeatsliao.github.io/github-farm/farm.png)](https://yeatsliao.github.io/github-farm/)
