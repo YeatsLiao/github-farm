@@ -1,5 +1,6 @@
 import { contains } from '../farm/geometry.js';
 import { randomFor } from '../farm/seed.js';
+import { pondDistance } from '../farm/terrain.js';
 
 const WIDTH = 640;
 const HEIGHT = 360;
@@ -139,20 +140,58 @@ function soilMask(ctx, beds, seed) {
   }
 }
 
+function paintDeck(ctx, {x, y, width, height, material}, seed) {
+  const front = y + height;
+  ctx.fillStyle = '#45392332';
+  ctx.fillRect(x + 2, front, width, 5);
+  for (const foot of [x + 4, x + width - 7]) {
+    ctx.fillStyle = '#543d27';
+    ctx.fillRect(foot, front - 1, 4, material === 'dock' ? 10 : 7);
+    ctx.fillStyle = '#a36d3d';
+    ctx.fillRect(foot, front - 1, 2, material === 'dock' ? 8 : 5);
+  }
+  ctx.fillStyle = '#755037';
+  ctx.fillRect(x, y + 2, width, height + 1);
+  for (let row = 0; row < height; row += 5) {
+    const inset = row === 0 ? 2 : 0;
+    const seam = Math.round(width * (.33 + grain(seed, x, y + row) * .34));
+    ctx.fillStyle = row % 2 ? '#ba8653' : '#b58050';
+    ctx.fillRect(x + inset, y + row, width - inset * 2, Math.min(4, height - row));
+    ctx.fillStyle = '#d5a270';
+    ctx.fillRect(x + inset, y + row, width - inset * 2, 1);
+    ctx.fillStyle = '#92633f';
+    ctx.fillRect(x + seam, y + row + 1, 1, Math.min(3, height - row - 1));
+  }
+  ctx.fillStyle = '#94623d';
+  ctx.fillRect(x + 1, front - 1, width - 2, 3);
+  ctx.fillStyle = '#b58250';
+  ctx.fillRect(x + 1, front - 1, width - 2, 1);
+  if (material === 'dock') {
+    // End board caps the planks where the platform extends over shallow water.
+    ctx.fillRect(x + 1, y + 1, 3, height - 2);
+  }
+}
+
 function paintYardSurfaces(ctx, surfaces, seed) {
   for (const {x, y, width, height, material} of surfaces) {
-    const stone = material === 'stone';
-    const colors = stone ? ['#a99476', '#b4a082', '#bfaa8c', '#bba88a'] : ['#ae7747', '#bf8a56', '#b47c4c', '#cc965e'];
-    const rowHeight = stone ? 9 : 5;
-    ctx.fillStyle = stone ? '#907c5d' : '#815a3d';
-    patch(ctx, x + width / 2, y + height / 2, width / 2 + 3, height / 2 + 3, seed);
+    if (material !== 'stone') {
+      paintDeck(ctx, {x, y, width, height, material}, seed);
+      continue;
+    }
+    const colors = ['#a7997c', '#b1a184', '#c2b18d', '#bbae92'];
+    const rowHeight = 8;
     for (let row = 0; row < height; row += rowHeight) {
-      const inset = row === 0 || row + rowHeight >= height ? 5 : 0;
-      for (let column = inset; column < width - inset;) {
+      const inset = 1 + Math.floor(grain(seed + 2, x, y + row) * 6);
+      for (let column = inset; column < width - 6;) {
         const n = grain(seed, x + column, y + row);
-        const length = Math.min((stone ? 11 : 23) + Math.floor(n * 13), width - inset - column);
+        const length = Math.min(8 + Math.floor(n * 12), width - 2 - column);
+        const h = Math.min(rowHeight - 1, height - row);
+        if (h < 3) break;
+        ctx.fillStyle = '#62533952';
+        ctx.fillRect(x + column, y + row + 1, length - 1, h);
         ctx.fillStyle = colors[Math.floor(n * colors.length)];
-        ctx.fillRect(x + column, y + row, Math.max(1, length - 1), Math.min(rowHeight - 1, height - row));
+        ctx.fillRect(x + column + 1, y + row, length - 2, h);
+        ctx.fillRect(x + column, y + row + 1, length - 1, h - 2);
         column += length;
       }
     }
@@ -164,8 +203,7 @@ export function paintStarGround(ctx, scene, createCanvas) {
   const [px, py, rx, ry] = pond;
   const roads = mask(createCanvas, c => roadMask(c, scene));
   const soil = mask(createCanvas, c => soilMask(c, scene.beds, seed));
-  const bank = mask(createCanvas, c => patch(c, px, py, rx + 6, ry + 5, seed));
-  const water = mask(createCanvas, c => patch(c, px, py - 1, rx - 1, ry - 2, seed));
+  const coast = new Float32Array(WIDTH * HEIGHT);
   const ground = createCanvas(WIDTH, HEIGHT).getContext('2d');
   const pixels = ground.createImageData(WIDTH, HEIGHT);
   for (let y = 0; y < HEIGHT; y++) {
@@ -189,14 +227,21 @@ export function paintStarGround(ctx, scene, createCanvas) {
         const furrow = (y % 7 < 2 ? -7 : 0) + detail * 9;
         red = 133 + light + furrow; green = 91 + light + furrow; blue = 54 + light;
       }
-      if (bank[uneven] > 100 + rough * 130) {
-        red = 151 + light; green = 140 + light; blue = 85 + light;
-      }
-      if (water[uneven] > 105 + rough * 85) {
-        const depth = Math.max(0, 1 - ((x - px) / rx) ** 2 - ((y - py) / ry) ** 2);
-        red = 57 - depth * 14 + light * .38;
-        green = 125 - depth * 25 + light * .64;
-        blue = 146 - depth * 18 + light * .7;
+      const nearPond = Math.abs(x - px) < rx * 1.22 + 8 && Math.abs(y - py) < ry * 1.22 + 8;
+      const shore = nearPond ? pondDistance(pond, seed, x, y) + detail * 2.8 + rough : 99;
+      coast[i >> 2] = shore;
+      if (shore < 0) {
+        const width = Math.min(25, ry * .8) * (.68 + noise(seed + 19, x, y, 26) * .55);
+        const depth = Math.min(1, (-shore + detail * 1.7) / width);
+        const shallows = Math.max(0, Math.min(1, 1 - depth));
+        red = 48 + 43 * shallows + light * .48;
+        green = 111 + 37 * shallows + light * .56;
+        blue = 132 + 8 * shallows + light * .54;
+      } else if (shore < 1.5 + (detail + .5) * 6 && roads[uneven] < 90) {
+        const damp = Math.max(0, 1 - shore / 7);
+        red = 152 - damp * 31 + light;
+        green = 147 - damp * 29 + light;
+        blue = 87 - damp * 18 + light * .6;
       }
       pixels.data[i] = red;
       pixels.data[i + 1] = green;
@@ -208,13 +253,17 @@ export function paintStarGround(ctx, scene, createCanvas) {
   const r = randomFor(seed, 'surface-marks');
   for (let i = 0; i < 2300; i++) {
     const x = Math.floor(r() * WIDTH), y = Math.floor(r() * HEIGHT), k = (y * WIDTH + x) * 4 + 3;
-    if (water[k] > 200 && i % 4 === 0) {
+    const shore = coast[k >> 2];
+    if (shore < -2 && i % 4 === 0) {
       ground.fillStyle = i % 3 ? '#a1c6bc65' : '#233e6140';
       ground.fillRect(x, y, 2 + Math.floor(r() * 5), 1);
+    } else if (shore > 1 && shore < 7 && roads[k] < 90) {
+      ground.fillStyle = i % 3 ? '#a49970' : '#7d8060';
+      ground.fillRect(x, y, 1 + i % 2, 1);
     } else if (roads[k] > 210 || soil[k] > 210) {
       ground.fillStyle = '#6e48212c';
       ground.fillRect(x, y, 2, 1);
-    } else if (bank[k] < 30 && roads[k] < 30 && soil[k] < 30 && noise(seed + 3, x, y, 23) > .49) {
+    } else if (shore > 4 && roads[k] < 30 && soil[k] < 30 && noise(seed + 3, x, y, 23) > .49) {
       ground.fillStyle = i % 3 ? '#5f793b70' : '#d1ca6770';
       ground.fillRect(x, y, 1, 2);
       ground.fillRect(x + 1, y + 1, 2, 1);

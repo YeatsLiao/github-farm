@@ -1,7 +1,6 @@
 import { createStarterScene, farmMilestones } from './src/farm/scene.js';
-import { activityFrame } from './src/farm/yard.js';
 import { fetchRepositoryStars, parseRepository, RepositoryLookupError } from './src/repository-stars.js';
-import { prepareStarCard } from './src/render/draw-card.js';
+import { drawStarCard } from './src/render/draw-card.js';
 
 const form = document.querySelector('#farm-form');
 const input = document.querySelector('#repository');
@@ -18,22 +17,16 @@ const caption = document.querySelector('#stage-caption');
 const currentStage = document.querySelector('#current-stage');
 const shortcuts = [...document.querySelectorAll('[data-stars]')];
 const places = document.querySelector('#places');
+const togglePlaces = document.querySelector('#toggle-places');
 const details = document.querySelector('#place-info');
 const placeName = document.querySelector('#place-name');
 const placeDescription = document.querySelector('#place-description');
-const motion = document.querySelector('#motion');
-const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const format = new Intl.NumberFormat('en-US');
 let artwork;
 let currentCard;
 let farm;
 let view;
 let focusedPlace;
-let playing = !reducedMotion.matches;
-let motionFrame;
-let motionStart;
-let motionTime = 0;
-let lastPaint = 0;
 let viewRequest;
 
 function repositoryName(inputValue) {
@@ -80,36 +73,12 @@ function setStatus(message, error = false) {
   status.toggleAttribute('data-error', error);
 }
 
-function paintFrame(time) {
-  if (time - lastPaint < 80) {
-    motionFrame = requestAnimationFrame(paintFrame);
-    return;
-  }
-  lastPaint = time;
-  view.card.paint(activityFrame(view.scene.activity, (time - motionStart) / 1000));
-  context.drawImage(view.card.canvas, 0, 0);
-  motionFrame = requestAnimationFrame(paintFrame);
-}
-
-function setMotion(enabled) {
-  playing = enabled;
-  cancelAnimationFrame(motionFrame);
-  if (motionStart !== undefined) motionTime = performance.now() - motionStart;
-  motionStart = undefined;
-  motion.textContent = playing ? 'Pause activity' : 'Play activity';
-  if (playing && view) {
-    motionStart = performance.now() - motionTime;
-    lastPaint = 0;
-    motionFrame = requestAnimationFrame(paintFrame);
-  }
-}
-
 function showPlace(place) {
   focusedPlace = place?.id;
   placeName.textContent = place?.label ?? 'Explore the farm';
   placeDescription.textContent = place
     ? `${place.description} ${place.at ? `Unlocks at ${format.format(place.at)} Stars.` : 'Available from the start.'}`
-    : 'Select a marker on the farm to explore.';
+    : places.hidden ? 'Show places to explore the farm.' : 'Select a marker on the farm to explore.';
   for (const marker of places.children) {
     marker.setAttribute('aria-pressed', String(marker.dataset.place === focusedPlace));
   }
@@ -142,15 +111,13 @@ function showPlaces(scene) {
 
 function showGrowth(stars, currentScene, currentFrame) {
   if (!farm || (view?.scene.snapshot.stars === stars && !currentScene)) return;
-  cancelAnimationFrame(motionFrame);
   const current = stars === farm.snapshot.stars;
   const scene = currentScene ?? createStarterScene(current ? farm.snapshot : {
     ...farm.snapshot, stars, newStars7d: null, source: 'preview',
   });
-  const card = currentFrame ?? prepareStarCard(scene, farm.art, createCanvas);
-  card.paint();
-  view = {scene, card};
-  context.drawImage(card.canvas, 0, 0);
+  const card = currentFrame ?? drawStarCard(scene, farm.art, createCanvas);
+  view = {scene};
+  context.drawImage(card, 0, 0);
   const amount = `${format.format(stars)} ${stars === 1 ? 'Star' : 'Stars'}`;
   const extra = !current && stars > farm.snapshot.stars ? ` · ${format.format(stars - farm.snapshot.stars)} to go` : '';
   caption.textContent = `${current ? 'Current farm' : 'Growth preview'} · ${amount}${extra}`;
@@ -160,10 +127,6 @@ function showGrowth(stars, currentScene, currentFrame) {
   currentStage.setAttribute('aria-current', current ? 'step' : 'false');
   for (const button of shortcuts) button.setAttribute('aria-current', !current && Number(button.dataset.stars) === stars ? 'step' : 'false');
   showPlaces(scene);
-  if (!focusedPlace) placeDescription.textContent = `${scene.activity.label}. Select a marker to explore.`;
-  motionStart = undefined;
-  motionTime = 0;
-  setMotion(playing);
 }
 
 async function scheduledSnapshot() {
@@ -182,9 +145,8 @@ async function showFarm(value) {
     setStatus(name ? `Loading ${name}…` : 'Loading the farm…');
     const [snapshot, art] = await Promise.all([name ? fetchRepositoryStars(name) : scheduledSnapshot(), loadArtwork()]);
     const scene = createStarterScene(snapshot);
-    const frame = prepareStarCard(scene, art, createCanvas);
-    frame.paint();
-    const png = await pngBlob(frame.canvas);
+    const frame = drawStarCard(scene, art, createCanvas);
+    const png = await pngBlob(frame);
     const updatedCard = URL.createObjectURL(png);
     download.href = updatedCard;
     download.download = `${snapshot.fullName.replace('/', '-')}-farm.png`;
@@ -201,7 +163,7 @@ async function showFarm(value) {
     farm = {snapshot, art, stages: [...new Set([...farmMilestones, snapshot.stars])].sort((a, b) => a - b)};
     growth.max = farm.stages.length - 1;
     showGrowth(snapshot.stars, scene, frame);
-    for (const element of [controls, places, details, canvas]) element.hidden = false;
+    for (const element of [controls, details, canvas]) element.hidden = false;
     image.hidden = true;
     document.querySelector('#static-download').hidden = true;
     setStatus(`${snapshot.fullName} · ${format.format(snapshot.stars)} ${snapshot.stars === 1 ? 'star' : 'stars'}`);
@@ -239,8 +201,12 @@ for (const button of shortcuts) {
   button.addEventListener('click', () => showGrowth(Number(button.dataset.stars)));
 }
 currentStage.addEventListener('click', () => showGrowth(farm.snapshot.stars));
-motion.addEventListener('click', () => setMotion(!playing));
-reducedMotion.addEventListener('change', event => setMotion(!event.matches));
+togglePlaces.addEventListener('click', () => {
+  places.hidden = !places.hidden;
+  togglePlaces.textContent = places.hidden ? 'Show places' : 'Hide places';
+  togglePlaces.setAttribute('aria-expanded', String(!places.hidden));
+  showPlace();
+});
 
 const requested = new URLSearchParams(location.search).get('repo');
 if (requested) input.value = requested;

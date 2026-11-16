@@ -9,26 +9,30 @@ import { createStarterScene } from '../src/farm/scene.js';
 import { seedOf } from '../src/farm/seed.js';
 
 const output = new URL('../dist/star-farm-theme-preview/', import.meta.url);
+const orchardViewport = {x: 35, y: 45, width: 560, height: 315};
+
+async function orchardCard(stars) {
+  const scene = createStarterScene({
+    repositoryId: '18221276', fullName: 'octocat/git-consortium', stars, newStars7d: null, source: 'preview',
+  });
+  return loadImage(await renderStarCard(scene, {viewport: orchardViewport}));
+}
 
 export async function renderOrchardComparison() {
-  const stages = [0, 5, 25, 100, 300];
-  const captions = ['Starter yard', 'First fruit', 'Harvest table', 'Jam shed', 'Dock and new trees'];
-  const viewport = {x: 35, y: 45, width: 560, height: 315};
+  const stages = [0, 25, 100, 300];
+  const captions = ['Starter yard', 'Harvest table', 'Jam shed', 'Dock and new trees'];
   const width = 448, height = 252, gap = 16, top = 58, label = 40;
-  const comparison = createCanvas(2 * width + 3 * gap, top + 3 * (height + label + gap));
+  const comparison = createCanvas(2 * width + 3 * gap, top + 2 * (height + label + gap));
   const ctx = comparison.getContext('2d');
   ctx.fillStyle = '#f2e6cb';
   ctx.fillRect(0, 0, comparison.width, comparison.height);
   ctx.fillStyle = '#503824';
   ctx.font = 'bold 22px monospace';
-  ctx.fillText('CREEKSIDE ORCHARD / FIVE GROWTH STAGES', gap + 4, 36);
+  ctx.fillText('CREEKSIDE ORCHARD / FOUR GROWTH STAGES', gap + 4, 36);
   ctx.imageSmoothingEnabled = false;
   for (const [index, stars] of stages.entries()) {
-    const scene = createStarterScene({
-      repositoryId: '18221276', fullName: 'octocat/git-consortium', stars, newStars7d: null, source: 'preview',
-    });
-    const tile = await loadImage(await renderStarCard(scene, {viewport}));
-    const x = index === stages.length - 1 ? (comparison.width - width) / 2 : gap + index % 2 * (width + gap);
+    const tile = await orchardCard(stars);
+    const x = gap + index % 2 * (width + gap);
     const y = top + Math.floor(index / 2) * (height + label + gap);
     ctx.drawImage(tile, 0, 96, 1280, 720, x, y, width, height);
     ctx.fillStyle = '#fff5df';
@@ -38,6 +42,41 @@ export async function renderOrchardComparison() {
     ctx.fillText(`${stars} STARS  /  ${captions[index]}`, x + 12, y + height + 25);
   }
   return comparison.toBuffer('image/png');
+}
+
+export async function renderOrchardDetails() {
+  const card = await orchardCard(300);
+  const crops = [
+    ['Shallows & dock', 106, 195, 71, 60],
+    ['Sorting platform', 173, 186, 99, 60],
+    ['Garden entrance & fence corners', 282, 221, 158, 75],
+  ];
+  const gap = 12, width = 350, height = 198, top = 57, label = 36;
+  const board = createCanvas(crops.length * (width + gap) + gap, top + height + label + gap);
+  const ctx = board.getContext('2d');
+  ctx.fillStyle = '#f2e6cb';
+  ctx.fillRect(0, 0, board.width, board.height);
+  ctx.fillStyle = '#503824';
+  ctx.font = 'bold 20px monospace';
+  ctx.fillText('CREEKSIDE ORCHARD / 300 STARS / EDGE DETAILS', gap + 2, 35);
+  ctx.imageSmoothingEnabled = false;
+  for (const [index, [name, x, y, w, h]] of crops.entries()) {
+    const left = gap + index * (width + gap);
+    const tileW = Math.min(width, Math.round(height * w / h));
+    const tileH = Math.round(tileW * h / w);
+    ctx.fillStyle = '#e5d8b9';
+    ctx.fillRect(left, top, width, height);
+    ctx.drawImage(card, (x - orchardViewport.x) * 1280 / orchardViewport.width,
+      96 + (y - orchardViewport.y) * 720 / orchardViewport.height,
+      w * 1280 / orchardViewport.width, h * 720 / orchardViewport.height,
+      left + Math.floor((width - tileW) / 2), top + Math.floor((height - tileH) / 2), tileW, tileH);
+    ctx.fillStyle = '#fff5df';
+    ctx.fillRect(left, top + height, width, label);
+    ctx.fillStyle = '#503824';
+    ctx.font = '15px monospace';
+    ctx.fillText(name, left + gap, top + height + 23);
+  }
+  return board.toBuffer('image/png');
 }
 
 async function renderPreviews() {

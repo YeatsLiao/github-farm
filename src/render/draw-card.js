@@ -29,7 +29,7 @@ function shadow(ctx, x, y, width) {
 function sprite(ctx, art, {type, x, y, scale = 1, ground = true}) {
   const pixels = yardProps[type];
   if (pixels) {
-    if (ground) shadow(ctx, x, y, pixels[0][3] * scale);
+    if (ground && type !== 'verge' && type !== 'pebbles') shadow(ctx, x, y, pixels[0][3] * scale);
     ctx.save();
     ctx.translate(Math.round(x), Math.round(y));
     ctx.scale(scale, scale);
@@ -45,24 +45,46 @@ function sprite(ctx, art, {type, x, y, scale = 1, ground = true}) {
   ctx.drawImage(art.atlas, ax, ay, w, h, Math.round(x - px * scale), Math.round(y - py * scale), Math.round(w * scale), Math.round(h * scale));
 }
 
-function fenceSide(ctx, {x, y, scale = 1}) {
-  // A fence running into the scene shows the ends of its rails and the side of each post.
-  const colors = ['#57351f', '#a96735', '#d89754', '#edb779'];
-  ctx.save();
-  ctx.translate(Math.round(x), Math.round(y));
-  ctx.scale(scale, scale);
-  for (const rail of [-15, -9]) {
-    fill(ctx, colors[0], -3, rail - 28, 6, 29);
-    fill(ctx, colors[1], -2, rail - 28, 4, 28);
-    fill(ctx, colors[2], -2, rail - 28, 2, 28);
+function fencePieces(runs) {
+  const rails = [];
+  const posts = new Map();
+  for (const points of runs) {
+    for (const [i, a] of points.slice(0, -1).entries()) {
+      const b = points[i + 1];
+      const count = Math.max(1, Math.round(Math.hypot(b[0] - a[0], b[1] - a[1]) / 22));
+      let last = a;
+      for (let n = 0; n <= count; n++) {
+        const point = a.map((coordinate, axis) => Math.round(coordinate + (b[axis] - coordinate) * n / count));
+        posts.set(point.join(','), {type: 'fence-post', x: point[0], y: point[1]});
+        if (n) rails.push({type: 'fence-rail', a: last, b: point, y: Math.max(last[1], point[1]) - .5});
+        last = point;
+      }
+    }
   }
-  for (const foot of [-28, 0]) {
-    fill(ctx, colors[0], -4, foot - 20, 8, 20);
-    fill(ctx, colors[1], -3, foot - 18, 6, 17);
-    fill(ctx, colors[2], -3, foot - 18, 3, 16);
-    fill(ctx, colors[3], -2, foot - 20, 4, 3);
+  return [...rails, ...posts.values()];
+}
+
+function paintFence(ctx, piece) {
+  if (piece.type === 'fence-post') {
+    const {x, y} = piece;
+    fill(ctx, '#48382655', x - 3, y - 1, 8, 3);
+    fill(ctx, '#654326', x - 3, y - 17, 6, 17);
+    fill(ctx, '#a26d43', x - 2, y - 15, 4, 14);
+    fill(ctx, '#d09a61', x - 2, y - 16, 3, 4);
+    fill(ctx, '#c18a56', x - 2, y - 11, 1, 9);
+    return;
   }
-  ctx.restore();
+  const {a, b} = piece;
+  const dx = b[0] - a[0], dy = b[1] - a[1];
+  const steps = Math.max(Math.abs(dx), Math.abs(dy));
+  for (const height of [13, 7]) {
+    for (let i = 0; i <= steps; i++) {
+      const x = Math.round(a[0] + dx * i / steps);
+      const y = Math.round(a[1] + dy * i / steps) - height;
+      fill(ctx, '#94613b', x, y, 2, 3);
+      fill(ctx, '#c69660', x, y, 2, 1);
+    }
+  }
 }
 
 function woodland(blueprint) {
@@ -80,45 +102,17 @@ function woodland(blueprint) {
 }
 
 function courtyard(scene) {
-  const b = scene.blueprint;
-  const [hx, hy] = b.home;
-  const [px, py, rx, ry] = b.pond;
-  const group = [
-    {type: 'hydrangea', x: hx - 67, y: hy + 5, scale: .86},
-    {type: 'daisy', x: hx - 78, y: hy + 12, scale: .78},
-    {type: 'sunflower', x: hx + 33, y: hy + 8, scale: .9},
-    {type: 'berry', x: hx + 44, y: hy + 4, scale: .82},
-    {type: 'rock', x: px - rx * .75, y: py - ry * .62, scale: .77},
-    {type: 'rock', x: px + rx * .89, y: py + ry * .46, scale: .7},
-    {type: 'daisy', x: px + rx * .8, y: py + ry * .81, scale: .75},
-    {type: 'fern', x: px - rx * .74, y: py + ry * .83, scale: .9},
-    {type: 'waterlily', x: px - rx * .35, y: py + ry * .35, scale: .6, ground: false},
+  const {home: [x, y]} = scene.blueprint;
+  return [
+    {type: 'hydrangea', x: x - 66, y: y + 6, scale: .75},
+    {type: 'daisy', x: x - 74, y: y + 12, scale: .67},
+    {type: 'verge', x: x - 50, y: y + 13, scale: .84, ground: false},
+    {type: 'berry', x: x + 42, y: y + 7, scale: .73},
+    {type: 'pebbles', x: x + 27, y: y + 13, ground: false},
   ];
-  if (scene.pen) {
-    const [x, y] = b.livestock;
-    let fenceCount = 0;
-    for (const side of [-1, 1]) {
-      const fenceX = x + side * 33, fenceY = y + 45;
-      if (b.reserved.some(box => contains(box, fenceX, fenceY, 13))) continue;
-      if (b.routes.some(route => route.points.some(([px, py]) => Math.abs(fenceX - px) < 17 && Math.abs(fenceY - py) < 9))) continue;
-      group.push({type: 'fence', x: fenceX, y: fenceY, scale: .86});
-      fenceCount++;
-    }
-    if (!fenceCount) group.push({type: 'barrel', x: x + 36, y: y + 5, scale: .72});
-  }
-  const [gx, gy] = b.gate;
-  for (const side of [-1, 1]) {
-    for (let i = 0; i < 2; i++) {
-      const x = gx + side * (25 + i * 28), y = gy - 9 - i * 3;
-      if (b.reserved.some(box => contains(box, x, y, 12))) continue;
-      if (b.routes.some(route => route.points.some(([px, py]) => Math.abs(x - px) < 12 && Math.abs(y - py) < 7))) continue;
-      group.push({type: 'fence', x, y, scale: .91});
-    }
-  }
-  return group;
 }
 
-export function prepareStarCard(scene, art, createCanvas, {
+export function drawStarCard(scene, art, createCanvas, {
   viewport = scene.viewport ?? {x: 0, y: 0, width: 640, height: 360},
   canvas = createCanvas(1280, 960),
 } = {}) {
@@ -137,21 +131,15 @@ export function prepareStarCard(scene, art, createCanvas, {
   // Render the farm at its native pixel size, then double it as a single scene.
   const farm = createCanvas(640, 360);
   const sceneCtx = farm.getContext('2d');
-  const ground = createCanvas(640, 360);
   sceneCtx.imageSmoothingEnabled = false;
-  paintStarGround(ground.getContext('2d'), scene, createCanvas);
-  const byDepth = (a, b) => a.y - b.y;
-  const objects = [...woodland(scene.blueprint), ...scene.objects, ...courtyard(scene)].sort(byDepth);
-  function paint(actors = []) {
-    const moving = new Set(actors.map(actor => actor.id));
-    const frame = actors.length ? [...objects.filter(object => !moving.has(object.id)), ...actors].sort(byDepth) : objects;
-    sceneCtx.drawImage(ground, 0, 0);
-    for (const object of frame) {
-      if (object.type === 'fence-side') fenceSide(sceneCtx, object);
-      else sprite(sceneCtx, art, object.type === 'waterlily' ? {...object, ground: false} : object);
-    }
-    ctx.drawImage(farm, viewport.x, viewport.y, viewport.width, viewport.height, 0, 48, 640, 360);
+  paintStarGround(sceneCtx, scene, createCanvas);
+  const objects = [...woodland(scene.blueprint), ...scene.objects, ...courtyard(scene), ...fencePieces(scene.fences ?? [])];
+  objects.sort((a, b) => a.y - b.y);
+  for (const object of objects) {
+    if (object.type === 'fence-post' || object.type === 'fence-rail') paintFence(sceneCtx, object);
+    else sprite(sceneCtx, art, object);
   }
+  ctx.drawImage(farm, viewport.x, viewport.y, viewport.width, viewport.height, 0, 48, 640, 360);
   fill(ctx, '#ba9c68', 0, 408, 640, 1);
 
   const s = scene.snapshot;
@@ -173,11 +161,5 @@ export function prepareStarCard(scene, art, createCanvas, {
     ? `${s.stale ? 'STALE' : 'UPDATED'}  |  ${s.fetchedAt.slice(0, 16).replace('T', ' ')} UTC  |  SPRING`
     : `DEMO DATA  |  ${s.fetchedAt}  |  SPRING`;
   ctx.fillText(stamp, 18, 469);
-  return {canvas, paint};
-}
-
-export function drawStarCard(scene, art, createCanvas, options) {
-  const {canvas, paint} = prepareStarCard(scene, art, createCanvas, options);
-  paint();
   return canvas;
 }

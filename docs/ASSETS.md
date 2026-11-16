@@ -7,11 +7,13 @@
 ## 更新图集
 
 1. 更新原稿和 [atlas-layout.js](../scripts/atlas-layout.js) 中的格网与精灵 ID。
-2. 运行 `npm run art:star-farm`，检查 `dist/star-spring-catalog.png`。
+2. 运行 `npm run art:star-farm`，检查 `dist/star-spring-catalog.png`。编译器清理透明裁切处的小块游离像素。
 3. 运行 `npm test` 和 `npm run preview:star-farm`，确认场景引用和成长对照。
 4. 将改动的原图、来源记录、图集和清单一起提交。添加外部素材时记录作者、来源链接和使用条件。
 
 ## 春季素材来源
+
+围栏、码头边板、支脚、路边碎石和植被簇使用原生像素绘制。检查局部时同时看浅草、深草、泥土和水边的轮廓，注意脚下阴影、端部收边和相邻素材的像素尺度。[溪边果园细节](https://yeatsliao.github.io/github-farm/orchard-details.png)
 
 2026-11-05 使用内置图像生成工具制作建筑、自然与道具三个原稿。提示词要求原创像素精灵、透明背景和统一网格。编译器从原稿中提取 34 帧，其中小屋有三帧升级样式。
 

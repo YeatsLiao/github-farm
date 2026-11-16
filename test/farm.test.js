@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {renderStarCard} from '../src/render/card.js';
 import {createStarterScene, farmMilestones, starterMilestones} from '../src/farm/scene.js';
-import {activityFrame} from '../src/farm/yard.js';
+import {pondDistance, routeDistance} from '../src/farm/terrain.js';
 import {yardProps} from '../src/render/props.js';
 const manifest=JSON.parse(await readFile(new URL('../assets/runtime/spring-manifest.json',import.meta.url),'utf8'));
 const snapshot=(id,stars)=>({repositoryId:id,fullName:'sample/repository',stars,newStars7d:12,fetchedAt:'2026-11-06 08:00 UTC'});
@@ -65,16 +65,50 @@ test('the orchard connects its fruit trees, table, shed and dock at their milest
  assert.ok(dock.blueprint.routes.some(route => route.id === 'new-orchard'));
  assert.equal(dock.places.find(place => place.id === 'dock').at, 300);
 
- const { activity } = dock;
- const [px, py, rx, ry] = dock.blueprint.pond;
- for (let time = 0; time <= 14; time += .2) {
-  const [farmer, ...actors] = activityFrame(activity, time);
-  assert.ok(((farmer.x - px) / rx) ** 2 + ((farmer.y - py) / ry) ** 2 > 1);
-  const duck = actors.find(actor => actor.type === 'duck');
-  assert.ok(((duck.x - px) / rx) ** 2 + ((duck.y - py) / ry) ** 2 < 1);
+ const deck = dock.yardSurfaces.find(surface => surface.material === 'dock');
+ const {pond, seed, routes} = dock.blueprint;
+ assert.ok(pondDistance(pond, seed, deck.x, deck.y + deck.height / 2) < 0);
+ assert.ok(pondDistance(pond, seed, deck.x + deck.width, deck.y + deck.height / 2) > 0);
+ assert.ok(routeDistance(routes, deck.x + deck.width, deck.y + deck.height / 2) < 8);
+});
+
+test('paths stay connected, fences leave access, and yard props respect water and crop beds', () => {
+ const waterOnly = new Set(['duck', 'waterlily']);
+ const shoreAllowed = new Set(['dock-post', 'rock', 'reeds']);
+ const furniture = new Set(['bench', 'crate', 'barrel', 'harvest-table', 'feed-bin', 'drying-rack']);
+ for (let i = 0; i < 12; i++) {
+  for (const stars of [0, 25, 100, 200, 300, 400, 1200, 2000, 2900, 5000]) {
+   const scene = createStarterScene(snapshot(`demo-${i}`, stars));
+   const {pond, seed, routes, reserved} = scene.blueprint;
+   assert.ok(reserved.length > scene.beds.length, 'paths know about occupied ground');
+   const reached = [routes[0]];
+   let remaining = routes.slice(1);
+   while (remaining.length) {
+    const next = remaining.filter(route => routeDistance(reached, ...route.points.at(-1)) <= 12);
+    assert.ok(next.length, `${scene.theme}/${stars}: disconnected ${remaining.map(route => route.id)}`);
+    reached.push(...next);
+    remaining = remaining.filter(route => !next.includes(route));
+   }
+   for (const run of scene.fences) for (const [[ax,ay],[bx,by]] of run.slice(1).map((end,j) => [run[j],end])) {
+    const steps = Math.ceil(Math.hypot(bx - ax, by - ay) / 2);
+    for (let step = 0; step <= steps; step++) {
+     const x = ax + (bx - ax) * step / steps, y = ay + (by - ay) * step / steps;
+     assert.ok(routeDistance(routes, x, y) >= 4, `${scene.theme}/${stars}: fence crosses path near ${x},${y}`);
+    }
+   }
+   for (const object of scene.objects) {
+    const {id,type,x,y} = object;
+    const distance = pondDistance(pond, seed, x, y);
+    const label = `${scene.theme}/${stars}: ${type} at ${x},${y}`;
+    if (waterOnly.has(type)) assert.ok(distance < 0, label);
+    else if (!shoreAllowed.has(type)) assert.ok(distance >= -1, label);
+    if (furniture.has(type)) assert.ok(routeDistance(routes, x, y) >= 7, label);
+    if (/^bed-\d-crop/.test(id) || /^terrace-(crop|companion)-/.test(id)) {
+     assert.ok(scene.beds.some(bed => Math.abs(bed.x - x) <= bed.w / 2 && Math.abs(bed.y - y) <= bed.h / 2), label);
+    }
+   }
+  }
  }
- assert.ok(activityFrame(activity, 2).some(actor => actor.type === 'basket'));
- assert.ok(!activityFrame(activity, 10).some(actor => actor.type === 'basket'));
 });
 
 test('each approved terrain grows through the full schedule and unlocks a windmill at 5000', () => {
