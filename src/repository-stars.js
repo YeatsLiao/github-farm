@@ -43,9 +43,9 @@ export function recentStarCount(weeks, fetchedAt, createdAt) {
   return total;
 }
 
-export async function fetchRepositoryStars(name, {fetchImpl = fetch, token = process.env.STAR_FARM_GITHUB_TOKEN, now = () => Date.now(), timeoutMs = 5_000} = {}) {
+export async function fetchRepositoryStars(name, {fetchImpl = fetch, token = globalThis.process?.env?.STAR_FARM_GITHUB_TOKEN, now = () => Date.now(), timeoutMs = 5_000} = {}) {
   const {owner, repo} = parseRepository(name);
-  const headers = {'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2026-03-10', 'User-Agent': 'github-farm'};
+  const headers = {'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2026-03-10'};
   if (token) headers.Authorization = `Bearer ${token}`;
   const signal = AbortSignal.timeout(timeoutMs);
   const get = path => fetchImpl(`${API}${path}`, {headers, signal});
@@ -53,8 +53,10 @@ export async function fetchRepositoryStars(name, {fetchImpl = fetch, token = pro
   let repository;
   try {
     const response = await get(`/repos/${owner}/${repo}`);
-    const restricted = response.status === 403 && response.headers.get('x-ratelimit-remaining') !== '0' && !response.headers.has('retry-after');
-    if (response.status === 404 || restricted || response.status === 451) throw new RepositoryLookupError('Repository unavailable', 404);
+    const rateLimited = response.status === 429 || (response.status === 403
+      && (response.headers.get('x-ratelimit-remaining') === '0' || response.headers.has('retry-after')));
+    if (rateLimited) throw new RepositoryLookupError('GitHub API rate limit reached', 429);
+    if ([403, 404, 451].includes(response.status)) throw new RepositoryLookupError('Repository unavailable', 404);
     if (!response.ok) throw new RepositoryLookupError('GitHub temporarily unavailable', 503);
     repository = await response.json();
   } catch (error) {

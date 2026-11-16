@@ -4,7 +4,7 @@ Use the [issue templates](https://github.com/YeatsLiao/github-farm/issues/new/ch
 
 ## Code
 
-Run `npm ci`, `npm test`, and `npm run build -- --repo YeatsLiao/github-farm`. Open `dist/pages/index.html` to inspect the result. Run `npm run preview:star-farm` if the change affects layouts or rendering.
+Run `npm ci`, `npm test`, and `npm run build -- --repo YeatsLiao/github-farm`. Follow the [local preview instructions](../README.md#run-locally) to test the generator. Run `npm run preview:star-farm` if the change affects layouts or rendering.
 
 Keep farm rules under `src/farm/`, drawing code under `src/render/`, and command entry points under `scripts/`. Update the relevant guide when changing a command, asset path, or deployment step. See the [project structure](ARCHITECTURE.md).
 

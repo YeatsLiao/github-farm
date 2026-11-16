@@ -1,10 +1,31 @@
-import { copyFile, mkdir, writeFile } from 'node:fs/promises';
+import { cp, mkdir, writeFile } from 'node:fs/promises';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { createStarterScene } from '../src/farm/scene.js';
 import { fetchRepositoryStars } from '../src/repository-stars.js';
 import { renderStarCard } from '../src/render/card.js';
 
-const output = new URL('../dist/pages/', import.meta.url);
+const root = new URL('../', import.meta.url);
+const output = new URL('dist/pages/', root);
+
+const browserFiles = [
+  ['scripts/pages.html', 'index.html'],
+  ['scripts/pages.js', 'app.js'],
+  ['src/repository-stars.js'],
+  ['src/farm'],
+  ['src/render/draw-card.js'],
+  ['src/render/ground.js'],
+  ['assets/runtime'],
+];
+
+async function copyBrowserFiles() {
+  await Promise.all(browserFiles.map(async ([source, filename = source]) => {
+    const destination = new URL(filename, output);
+    await mkdir(dirname(fileURLToPath(destination)), {recursive: true});
+    await cp(new URL(source, root), destination, {recursive: true});
+  }));
+}
 
 try {
   const { values } = parseArgs({ options: { repo: { type: 'string' } } });
@@ -15,7 +36,7 @@ try {
   const png = await renderStarCard(createStarterScene(snapshot));
   await mkdir(output, { recursive: true });
   await writeFile(new URL('farm.png', output), png);
-  await copyFile(new URL('./pages.html', import.meta.url), new URL('index.html', output));
+  await copyBrowserFiles();
   console.log(`Built dist/pages/ for ${snapshot.fullName} (${snapshot.stars} stars)`);
 } catch (error) {
   console.error(`Failed to build Pages: ${error.message}`);
