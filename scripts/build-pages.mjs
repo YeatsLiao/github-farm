@@ -5,7 +5,7 @@ import { parseArgs } from 'node:util';
 import { createStarterScene } from '../src/farm/scene.js';
 import { fetchRepositoryStars } from '../src/repository-stars.js';
 import { renderFarmIcon, renderStarCard } from '../src/render/card.js';
-import { renderOrchardComparison } from './preview-farms.mjs';
+import { renderOrchardComparison, renderOrchardDetails } from './preview-farms.mjs';
 
 const root = new URL('../', import.meta.url);
 const output = new URL('dist/pages/', root);
@@ -41,6 +41,7 @@ try {
   await writeFile(new URL('snapshot.json', output), JSON.stringify(snapshot));
   await writeFile(new URL('favicon.png', output), await renderFarmIcon());
   await writeFile(new URL('orchard-growth.png', output), await renderOrchardComparison());
+  await writeFile(new URL('orchard-details.png', output), await renderOrchardDetails());
   await copyBrowserFiles();
   console.log(`Built dist/pages/ for ${snapshot.fullName} (${snapshot.stars} stars)`);
 } catch (error) {

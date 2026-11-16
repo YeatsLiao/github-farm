@@ -2,6 +2,8 @@ import { starterThemes, starterViewport } from './layouts.js';
 import { farmExpansions } from './expansions.js';
 import { randomFor, seedOf } from './seed.js';
 import { describeYard } from './yard.js';
+import { contains } from './geometry.js';
+import { occupiedGround, pondDistance, routeDistance } from './terrain.js';
 
 export const starterMilestones = [0, 1, 5, 10, 25, 50, 100, 200, 300];
 export const farmMilestones = [...starterMilestones, ...Array.from({length: 47}, (_, index) => 400 + index * 100)];
@@ -12,32 +14,32 @@ const additions = {
   'cottage-garden': [
     [['sprout', 197, 234, .82]],
     [['daisy', 204, 280, .85], ['sunflower', 96, 245, .8]],
-    [['crate', 191, 207, .72]],
+    [['crate', 166, 196, .72]],
     [['harvest-table', 219, 216], ['basket', 208, 224]],
     [['barrel', 305, 195, .73]],
     [['drying-rack', 178, 204], ['scarecrow', 211, 267, .82]],
-    [['barrel', 480, 259, .83], ['crate', 502, 267, .83]],
+    [['barrel', 502, 252, .83], ['crate', 502, 267, .83]],
     [['carrot', 488, 292, .88], ['tomato', 508, 291, .88], ['pumpkin', 528, 292, .84]],
   ],
   'creek-orchard': [
     [['crate', 236, 218, .67]],
-    [['daisy', 164, 232, .8], ['hydrangea', 201, 260, .72]],
+    [['daisy', 169, 240, .8], ['hydrangea', 201, 260, .72]],
     [['barrel', 178, 217, .7]],
     [['harvest-table', 253, 216], ['basket', 268, 223]],
     [['crate', 268, 244, .72]],
     [['coop', 290, 171, .63, 'jam-shed'], ['jam-sign', 309, 178]],
-    [['bench', 529, 227, .86], ['crate', 551, 233, .83]],
+    [['bench', 537, 249, .86], ['crate', 559, 253, .83]],
     [['apple', 515, 197, .87], ['orange', 545, 172, .84], ['dock-post', 135, 218], ['dock-post', 136, 229]],
   ],
   'barnyard-pasture': [
-    [['chicken', 395, 239, .74]],
+    [['chicken', 378, 248, .74]],
     [['daisy', 301, 271, .78], ['sunflower', 364, 279, .77]],
     [['crate', 350, 244, .7]],
-    [['harvest-table', 280, 226], ['basket', 278, 232]],
+    [['harvest-table', 266, 209], ['basket', 273, 208]],
     [['chicken', 394, 194, .84]],
-    [['feed-bin', 289, 209], ['crate', 304, 207, .68]],
+    [['feed-bin', 284, 193], ['crate', 304, 193, .68]],
     [['coop', 529, 180, .87], ['barrel', 549, 194, .74]],
-    [['fence', 491, 248, .87], ['fence', 516, 248, .87], ['fence', 541, 248, .87], ['chicken', 527, 224, .86]],
+    [['chicken', 527, 224, .86], ['verge', 503, 252]],
   ],
 };
 
@@ -49,11 +51,11 @@ const yardPaths = {
     {at: 0, route: {id: 'picking-path', points: [[156, 174], [157, 202], [156, 223]]}},
     {at: 25, route: {id: 'harvest-path', points: [[253, 226], [232, 238]]}},
     {at: 100, route: {id: 'jam-yard', points: [[290, 178], [292, 200], [284, 226]]}, surface: {x: 273, y: 173, width: 36, height: 16, material: 'stone'}},
-    {at: 300, surface: {x: 134, y: 216, width: 28, height: 14, material: 'wood'}},
+    {at: 300, surface: {x: 130, y: 216, width: 37, height: 14, material: 'dock'}},
     {at: 300, route: {id: 'new-orchard', points: [[531, 184], [537, 207], [528, 229]]}},
   ],
   'barnyard-pasture': [
-    {at: 100, route: {id: 'feed-yard', points: [[288, 216], [278, 225], [278, 241]]}, surface: {x: 278, y: 207, width: 28, height: 15, material: 'wood'}},
+    {at: 100, route: {id: 'feed-yard', points: [[284, 205], [287, 215], [292, 223]]}, surface: {x: 273, y: 191, width: 41, height: 15, material: 'wood'}},
   ],
 };
 
@@ -68,7 +70,7 @@ const expansion = {
     surface: {x: 491, y: 219, width: 64, height: 23, material: 'wood'},
   },
   'barnyard-pasture': {
-    points: [[527, 196], [505, 218], [467, 222], [440, 227], [388, 223], [318, 226]],
+    points: [[527, 196], [498, 206], [470, 215], [447, 214], [392, 211], [337, 205]],
     surface: {x: 493, y: 184, width: 61, height: 39, material: 'stone'},
   },
 };
@@ -83,8 +85,9 @@ function propsAt(entries, prefix) {
 function growStarterPlants(objects, theme, stars, seed) {
   const random = randomFor(seed, 'garden-variety');
   const fruit = random() < .5 ? 'apple' : 'orange';
-  const crops = theme === 'barnyard-pasture' ? ['wheat', 'carrot'] : ['tomato', 'carrot', 'pumpkin'];
+  const crops = theme.slug === 'barnyard-pasture' ? ['wheat', 'carrot'] : ['tomato', 'carrot', 'pumpkin'];
   const primary = crops[Math.floor(random() * crops.length)];
+  const reserved = occupiedGround(objects, theme.beds, theme.fences);
   for (const object of objects) {
     if (object.id === 'young-fruit') {
       object.type = stars >= 5 ? fruit : 'oak';
@@ -94,9 +97,25 @@ function growStarterPlants(objects, theme, stars, seed) {
     } else if (object.id.startsWith('bed-') && random() < .22 && object.type !== 'daisy') {
       object.type = primary;
     } else if (['daisy', 'fern', 'berry'].includes(object.type) && !object.id.startsWith('bed-')) {
-      object.x += Math.floor(random() * 5) - 2;
-      object.y += Math.floor(random() * 5) - 2;
+      const x = object.x + Math.floor(random() * 5) - 2;
+      const y = object.y + Math.floor(random() * 5) - 2;
+      if (pondDistance(theme.pond, seed, x, y) >= 2 && routeDistance(theme.routes, x, y) >= 7
+        && !reserved.some(rect => contains(rect, x, y, 2))) Object.assign(object, {x, y});
     }
+  }
+}
+
+function placeShoreDetails(theme, objects, seed) {
+  const random = randomFor(seed, 'shore-details');
+  const [cx, cy, rx, ry] = theme.pond;
+  for (const [i, direction] of [-.9, -.5, -.25, .5, .8, 1.25, 1.8, 2.3, 4.6].entries()) {
+    const angle = direction + (random() - .5) * .16;
+    const x = Math.round(cx + Math.cos(angle) * (rx + 7));
+    const y = Math.round(cy + Math.sin(angle) * (ry + 7));
+    if (pondDistance(theme.pond, seed, x, y) < 2 || routeDistance(theme.routes, x, y) < 10) continue;
+    if (theme.slug === 'creek-orchard' && x >= 124 && x <= 172 && y >= 204 && y <= 237) continue;
+    if (objects.some(object => Math.hypot(object.x - x, object.y - y) < 11)) continue;
+    objects.push({id: `shore-${i}`, type: i % 3 ? 'verge' : 'pebbles', x, y, scale: .85, ground: false});
   }
 }
 
@@ -135,9 +154,9 @@ function extendFarm(layout, theme, stars, objects, beds, routes, surfaces) {
     const sowAt = 2100 + index * 100;
     const harvestAt = sowAt + 400;
     if (stars < sowAt) continue;
-    add(`terrace-companion-${index}`, stars >= harvestAt ? 'carrot' : 'sprout', fieldX - 30 + 20 * index, fieldY + 17, .68);
+    add(`terrace-companion-${index}`, stars >= harvestAt ? 'carrot' : 'sprout', fieldX - 30 + 20 * index, fieldY + Math.min(17, height / 2 - 3), .68);
   }
-  if (stars >= 2900) add('produce-supplies', 'barrel', workX - 29, workY + 14, .72);
+  if (stars >= 2900) add('produce-supplies', 'barrel', workX - 25, workY + 32, .72);
   for (const [index, [x, y]] of layout.perennial.entries()) {
     const plantAt = 3000 + index * 300;
     if (stars >= plantAt) add(`perennial-${index}`, index % 2 ? 'hydrangea' : 'berry', x, y, Math.min(.94, .51 + .2 * ((stars - plantAt) / 100)));
@@ -170,7 +189,8 @@ export function createStarterScene(snapshot) {
   const beds = [...theme.beds];
   const yardSurfaces = [...(theme.yardSurfaces ?? [])];
   const routes = [...theme.routes];
-  growStarterPlants(objects, theme.slug, stageStars, seed);
+  growStarterPlants(objects, theme, stageStars, seed);
+  placeShoreDetails(theme, objects, seed);
   for (let index = 0; index < Math.min(phase, starterMilestones.length - 1); index++) {
     objects.push(...propsAt(additions[theme.slug][index], `growth-${starterMilestones[index + 1]}`));
   }
@@ -186,17 +206,20 @@ export function createStarterScene(snapshot) {
   }
   const extended = stageStars >= 400;
   if (extended) extendFarm(farmExpansions[theme.slug], theme.slug, stageStars, objects, beds, routes, yardSurfaces);
+  const fences = theme.slug === 'barnyard-pasture' && stageStars >= 300
+    ? [...theme.fences, [[488, 232], [488, 249], [552, 249], [552, 207]]]
+    : theme.fences;
   const blueprint = {
     seed, home: theme.home, well: theme.well, pond: theme.pond, gate: theme.gate,
-    livestock: theme.livestock, reserved: [], routes,
+    livestock: theme.livestock, reserved: occupiedGround(objects, beds, fences), routes,
   };
   return {
     theme: theme.slug,
     snapshot,
     viewport: extended ? {x: 0, y: 0, width: 640, height: 360} : opened ? {x: 41, y: 39, width: 544, height: 306} : starterViewport,
     blueprint,
-    ...describeYard(theme.slug, stageStars, objects, beds, blueprint),
-    objects, beds, yardSurfaces, livestock: Boolean(theme.livestock),
+    ...describeYard(theme.slug, objects, beds, blueprint),
+    objects, beds, fences, yardSurfaces, livestock: Boolean(theme.livestock),
     stage: {
       number: phase + 1, total: farmMilestones.length,
       next: farmMilestones[phase + 1],

@@ -12,7 +12,7 @@ test/       农场生成与图片服务测试
 ## 代码放在哪里
 
 - 改仓库数据或 Star 统计，查看 [repository-stars.js](../src/repository-stars.js)。
-- 初始布局与成长规则在 [src/farm/](../src/farm/)。地点说明与活动路线集中在 [yard.js](../src/farm/yard.js)。
+- 初始布局与成长规则在 [src/farm/](../src/farm/)。[yard.js](../src/farm/yard.js) 提供地点说明，[terrain.js](../src/farm/terrain.js) 提供岸线、地面占位和通道距离。
 - 地面、精灵合成、卡片排版和收获篮等小道具放在 [src/render/](../src/render/)。
 - 改 Pages 生成器，编辑 [pages.html](../scripts/pages.html) 和 [pages.js](../scripts/pages.js)。[build-pages.mjs](../scripts/build-pages.mjs) 发布生成器和默认 PNG，浏览器与 Node 复用 [卡片绘制逻辑](../src/render/draw-card.js)。
 - 改素材先看[素材规范](ASSETS.md)。新增代码和脚本使用小写短横线文件名，文件按实际职责归入现有目录。
@@ -21,7 +21,7 @@ test/       农场生成与图片服务测试
 
 仓库 ID 决定三种初始布局之一。成长点从 0、1、5、10、25、50 Stars 开始，从 100 到 5,000 每 100 Stars 一档。5,000 Stars 解锁风车，之后继续显示真实 Star 数。卡片显示更新时刻与下一里程碑，GitHub 提供可用历史时也显示最近七个完整日的新增 Stars。
 
-网页从同一个场景读取地点和成长状态。拖动时间轴进入预览，下载仍使用当前真实档位。浏览器为每个档位缓存地面，再绘制农夫和鸭子的活动帧。相关范围和验收见[农场升级计划](UPGRADE-PLAN.md)。
+网页与 PNG 使用同一静态场景。时间轴在档位改变时重绘，下载使用当前真实档位。岸线形状同时用于绘制与摆放检查。道路转弯会避开建筑、菜地和围栏占地。[农场升级计划](UPGRADE-PLAN.md)
 
 本地开发需要 Node.js 20.19 或更新版本。安装依赖后可运行：
 

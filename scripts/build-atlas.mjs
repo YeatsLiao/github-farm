@@ -7,6 +7,35 @@ await mkdir(out,{recursive:true});
 const atlas=createCanvas(1024,640),ctx=atlas.getContext('2d');ctx.imageSmoothingEnabled=false;
 const manifest={schemaVersion:1,artVersion:'star-spring-1',sprites:{}},sources=[];
 let slot=0;
+
+function cleanEdges(image, width, height) {
+  const samples = image.data;
+  let opaque = 0;
+  for (let i = 3; i < samples.length; i += 4) {
+    samples[i] = samples[i] >= 96 ? 255 : 0;
+    opaque += samples[i] === 255 ? 1 : 0;
+  }
+  const minimum = Math.max(4, Math.floor(opaque * .0012));
+  const visited = new Uint8Array(width * height);
+  for (let i = 0; i < visited.length; i++) {
+    if (visited[i] || !samples[i * 4 + 3]) continue;
+    const island = [i];
+    visited[i] = 1;
+    for (let j = 0; j < island.length; j++) {
+      const point = island[j], x = point % width, y = Math.floor(point / width);
+      for (let ny = Math.max(0, y - 1); ny <= Math.min(height - 1, y + 1); ny++) {
+        for (let nx = Math.max(0, x - 1); nx <= Math.min(width - 1, x + 1); nx++) {
+          const neighbor = ny * width + nx;
+          if (visited[neighbor] || !samples[neighbor * 4 + 3]) continue;
+          visited[neighbor] = 1;
+          island.push(neighbor);
+        }
+      }
+    }
+    if (island.length < minimum) for (const point of island) samples[point * 4 + 3] = 0;
+  }
+}
+
 for(const sheet of SPRING_SHEETS){
  const bytes=await readFile(new URL(sheet.file,source)),img=await loadImage(bytes),c=createCanvas(img.width,img.height),g=c.getContext('2d');g.drawImage(img,0,0);
  sources.push({id:sheet.id,file:sheet.file,sha256:createHash('sha256').update(bytes).digest('hex'),width:img.width,height:img.height});
@@ -14,10 +43,11 @@ for(const sheet of SPRING_SHEETS){
   const sx=Math.round(i%sheet.cols*img.width/sheet.cols),sy=Math.round(Math.floor(i/sheet.cols)*img.height/sheet.rows);
   const sw=Math.round((i%sheet.cols+1)*img.width/sheet.cols)-sx,sh=Math.round((Math.floor(i/sheet.cols)+1)*img.height/sheet.rows)-sy;
   const pixels=g.getImageData(sx,sy,sw,sh),d=pixels.data;let left=sw,top=sh,right=-1,bottom=-1,count=0;
+  cleanEdges(pixels, sw, sh);
   for(let y=0;y<sh;y++)for(let x=0;x<sw;x++){
    const p=(y*sw+x)*4;
-   // Ignore alpha extraction residue; preserve solid subject colours.
-   if(d[p+3]<96){d[p+3]=0;continue;} d[p+3]=255;count++;
+   if(!d[p+3])continue;
+   count++;
    left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);
   }
   if(count<40||right<left)throw Error('Empty subject: '+id);

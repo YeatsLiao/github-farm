@@ -42,8 +42,8 @@
     .details { justify-content: space-between; margin: .65rem 0; padding: .65rem .8rem; background: #f7efd9; border-radius: .4rem; }
     .details h2 { font-size: 1rem; margin: 0; }
     .details p { font-size: .875rem; margin: .2rem 0 0; }
-    .details .activity { flex: 1 1 17rem; }
-    .details .activity-controls { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem; }
+    .details .place-copy { flex: 1 1 17rem; }
+    .details .detail-links { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem; }
     a { color: #5b3e2c; }
     :focus-visible { outline: 2px solid #415f37; outline-offset: 3px; }
   </style>
@@ -84,14 +84,15 @@
       <div id="places" role="group" aria-label="Explore places on the farm" hidden></div>
     </div>
     <section id="place-info" class="details" aria-label="Farm details" hidden>
-      <div class="activity" aria-live="polite">
+      <div class="place-copy" aria-live="polite">
         <h2 id="place-name">Explore the farm</h2>
         <p id="place-description">Select a marker to learn about that part of the farm.</p>
       </div>
-      <div class="activity-controls">
-        <button type="button" class="quiet-button" id="motion">Pause activity</button>
+      <div class="detail-links">
+        <button id="toggle-places" class="quiet-button" type="button" aria-controls="places" aria-expanded="false">Show places</button>
         <a id="download" href="./farm.png" download>Download current PNG</a>
         <a href="./orchard-growth.png">Orchard comparison</a>
+        <a href="./orchard-details.png">Shore &amp; fence details</a>
       </div>
     </section>
     <p id="static-download"><a href="./farm.png" download>Download PNG</a></p>
