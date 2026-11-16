@@ -1,6 +1,6 @@
 # Star Farm v1 改造计划
 
-2026-11-15 实施进度。三种已确认布局已接入 56 档成长规则，真实数据 CLI 和 PNG 服务已跑通，缓存与异常分支已验收。见[本地验收与发布步骤](../acceptance/star-farm-v1/RELEASE.md)。当前待公开 HTTPS 托管验证。
+2026-11-15 实施进度。三种已确认布局已接入 56 档成长规则，真实数据 CLI 和 PNG 服务已跑通，缓存与异常分支已验收。见[本地验收与发布步骤](../../docs/acceptance/star-farm.md)。当前待公开 HTTPS 托管验证。
 
 2026-11-15。木屋菜园、溪边果园、谷仓牧场的 0 Stars 构图已确认。新版起步模板由仓库 ID 选择，0 至 300 Stars 共九档，200 Stars 时镜头展开到新增作业区。本地命令 `npm run build:star-farm -- --id demo-0 --repo example/farm --stars 25` 可直接输出卡片。后续将完整的后期成长规则移入三个模板，再接真实仓库数据与 README 图片接口。
 
@@ -23,10 +23,10 @@
 
 ## 2. 设计稿与信息布局
 
-- [A 风格基准](../design/star-farm-v1/style-a-reference.png)
-- [README 信息卡](../design/star-farm-v1/readme-card.png)
-- [低、中、高阶段对照](../design/star-farm-v1/growth-stages.png)
-- [生成方式及完整提示词](../design/star-farm-v1/README.md)
+- [A 风格基准](../../docs/design/star-farm-v1/style-a-reference.png)
+- [README 信息卡](../../docs/design/star-farm-v1/readme-card.png)
+- [低、中、高阶段对照](../../docs/design/star-farm-v1/growth-stages.png)
+- [生成方式及完整提示词](../../docs/design/star-farm-v1/README.md)
 
 以上均为概念稿，32 / 320 / 1,280 Stars 等为演示值，不代表实际账号数据。
 生图稿中地形和物件存在细微偏差；正式渲染中同一仓库跨阶段共用地形和锚点，所有仓库统一美术比例；不同仓库允许不同布局。不能把三张生图直接作为最终实现。
