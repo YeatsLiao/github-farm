@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Want to help improve the visual style? 🎨
+        See the [asset guide](https://github.com/YeatsLiao/github-farm/blob/main/docs/ASSETS.md) for file names and source records.
   - type: dropdown
     id: contribution_type
     attributes:
@@ -33,11 +33,11 @@ body:
     id: specs
     attributes:
       label: Technical specs
-      description: Dimensions, format, color palette used
+      description: Dimensions, format, and source
       placeholder: |
-        - Sprite size: 16x16 or 32x32
-        - Format: PNG with transparency
-        - Color palette: ...
+        - Sheet dimensions and grid
+        - Transparent PNG
+        - Author, source link, and usage terms for external art
   - type: textarea
     id: preview
     attributes:
