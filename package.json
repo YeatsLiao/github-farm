@@ -7,7 +7,7 @@
   "scripts": {
     "build": "node scripts/build-pages.mjs",
     "build:star-farm": "node scripts/render/render-starter-farm.mjs",
-    "test": "node --test test",
+    "test": "cd test && node --test",
     "test:star-farm": "npm test",
     "preview:star-farm": "node scripts/render/preview-farm-themes.mjs",
     "serve:star-farm": "node src/http/start-star-farm.js",
