@@ -1,6 +1,7 @@
 import { contains } from '../farm/geometry.js';
 import { randomFor } from '../farm/seed.js';
 import { paintStarGround } from './ground.js';
+import { yardProps } from './props.js';
 
 function fill(ctx, color, x, y, width, height) {
   ctx.fillStyle = color;
@@ -26,6 +27,16 @@ function shadow(ctx, x, y, width) {
 }
 
 function sprite(ctx, art, {type, x, y, scale = 1, ground = true}) {
+  const pixels = yardProps[type];
+  if (pixels) {
+    if (ground) shadow(ctx, x, y, pixels[0][3] * scale);
+    ctx.save();
+    ctx.translate(Math.round(x), Math.round(y));
+    ctx.scale(scale, scale);
+    for (const [color, left, top, width, height] of pixels) fill(ctx, color, left, top, width, height);
+    ctx.restore();
+    return;
+  }
   const entry = art.manifest.sprites[type];
   if (!entry) throw Error('Missing sprite ' + type);
   const [ax, ay, w, h] = entry.rect;
@@ -107,10 +118,12 @@ function courtyard(scene) {
   return group;
 }
 
-export function drawStarCard(scene, art, createCanvas, {viewport = scene.viewport ?? {x: 0, y: 0, width: 640, height: 360}} = {}) {
-  const canvas = createCanvas(1280, 960);
+export function prepareStarCard(scene, art, createCanvas, {
+  viewport = scene.viewport ?? {x: 0, y: 0, width: 640, height: 360},
+  canvas = createCanvas(1280, 960),
+} = {}) {
   const ctx = canvas.getContext('2d');
-  ctx.scale(2, 2);
+  ctx.setTransform(2, 0, 0, 2, 0, 0);
   ctx.imageSmoothingEnabled = false;
   fill(ctx, '#f7efd9', 0, 0, 640, 480);
   ctx.fillStyle = '#503824';
@@ -118,21 +131,27 @@ export function drawStarCard(scene, art, createCanvas, {viewport = scene.viewpor
   ctx.fillText(fitTitle(ctx, scene.snapshot.fullName, 580), 42, 23);
   ctx.font = '10px monospace';
   ctx.fillStyle = '#8c7251';
-  ctx.fillText('A LITTLE FARM GROWN BY YOUR COMMUNITY', 42, 38);
+  ctx.fillText(scene.name.toUpperCase(), 42, 38);
   sprite(ctx, art, {type: 'sprout', x: 22, y: 29, scale: 1.4, ground: false});
 
   // Render the farm at its native pixel size, then double it as a single scene.
   const farm = createCanvas(640, 360);
   const sceneCtx = farm.getContext('2d');
+  const ground = createCanvas(640, 360);
   sceneCtx.imageSmoothingEnabled = false;
-  paintStarGround(sceneCtx, scene, createCanvas);
-  const objects = [...woodland(scene.blueprint), ...scene.objects, ...courtyard(scene)];
-  objects.sort((a, b) => a.y - b.y);
-  for (const object of objects) {
-    if (object.type === 'fence-side') fenceSide(sceneCtx, object);
-    else sprite(sceneCtx, art, object.type === 'waterlily' ? {...object, ground: false} : object);
+  paintStarGround(ground.getContext('2d'), scene, createCanvas);
+  const byDepth = (a, b) => a.y - b.y;
+  const objects = [...woodland(scene.blueprint), ...scene.objects, ...courtyard(scene)].sort(byDepth);
+  function paint(actors = []) {
+    const moving = new Set(actors.map(actor => actor.id));
+    const frame = actors.length ? [...objects.filter(object => !moving.has(object.id)), ...actors].sort(byDepth) : objects;
+    sceneCtx.drawImage(ground, 0, 0);
+    for (const object of frame) {
+      if (object.type === 'fence-side') fenceSide(sceneCtx, object);
+      else sprite(sceneCtx, art, object.type === 'waterlily' ? {...object, ground: false} : object);
+    }
+    ctx.drawImage(farm, viewport.x, viewport.y, viewport.width, viewport.height, 0, 48, 640, 360);
   }
-  ctx.drawImage(farm, viewport.x, viewport.y, viewport.width, viewport.height, 0, 48, 640, 360);
   fill(ctx, '#ba9c68', 0, 408, 640, 1);
 
   const s = scene.snapshot;
@@ -148,9 +167,17 @@ export function drawStarCard(scene, art, createCanvas, {viewport = scene.viewpor
   const next = milestone == null ? scene.stage.endLabel ?? 'FULLY GROWN' : `NEXT STAGE: ${milestone.toLocaleString('en-US')}  /  ${(milestone - s.stars).toLocaleString('en-US')} TO GO`;
   ctx.fillText(next, 18, 452);
   ctx.font = '9px monospace';
-  const stamp = s.source === 'github'
+  const stamp = s.source === 'preview'
+    ? 'MILESTONE PREVIEW  |  SPRING'
+    : s.source === 'github'
     ? `${s.stale ? 'STALE' : 'UPDATED'}  |  ${s.fetchedAt.slice(0, 16).replace('T', ' ')} UTC  |  SPRING`
     : `DEMO DATA  |  ${s.fetchedAt}  |  SPRING`;
   ctx.fillText(stamp, 18, 469);
+  return {canvas, paint};
+}
+
+export function drawStarCard(scene, art, createCanvas, options) {
+  const {canvas, paint} = prepareStarCard(scene, art, createCanvas, options);
+  paint();
   return canvas;
 }

@@ -6,11 +6,13 @@ A GitHub repository’s stars grow a pixel-art farm. Each repository gets a stab
 
 [Open the generator](https://yeatsliao.github.io/github-farm/) and enter any public repository as `OWNER/REPO` or paste its GitHub URL. [Try octocat/git-consortium](https://yeatsliao.github.io/github-farm/?repo=octocat%2Fgit-consortium).
 
+Explore the map markers, move through the growth timeline, and watch the farm’s daily activity. [Compare five orchard stages](https://yeatsliao.github.io/github-farm/orchard-growth.png).
+
 [![GitHub Farm and its star statistics](https://yeatsliao.github.io/github-farm/farm.png)](https://yeatsliao.github.io/github-farm/)
 
 ## Add a farm to your README
 
-The generator gives you a shareable link and a downloadable PNG. This line embeds the farm shown above. For a PNG that updates automatically for your repository, follow the [Pages setup guide](docs/DEPLOYMENT.md).
+The generator gives you a shareable link and a downloadable PNG of the current farm. This line embeds the farm shown above. For a PNG that updates automatically for your repository, follow the [Pages setup guide](docs/DEPLOYMENT.md).
 
 ```markdown
 [![GitHub Farm](https://yeatsliao.github.io/github-farm/farm.png)](https://yeatsliao.github.io/github-farm/)

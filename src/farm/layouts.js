@@ -8,6 +8,7 @@ function plantedRows(bed, rows) {
     bed.x + (column - (plants.length - 1) / 2) * 18,
     bed.y - bed.h * .23 + row * 17,
     .81,
+    `${bed.id}-crop-${row}-${column}`,
   ]));
 }
 
@@ -59,12 +60,12 @@ export const starterThemes = [
     yardSurfaces: [{x: 177, y: 202, width: 84, height: 31, material: 'wood'}],
     routes: [
       route('home', [[398, 195], [372, 198], [325, 206], [284, 226], [279, 268], [279, 350]]),
-      route('pond', [[156, 223], [193, 238], [241, 238], [284, 226]]),
+      route('pond', [[156, 223], [193, 238], [232, 238], [241, 238], [284, 226]]),
       route('bed-0', [[320, 252], [280, 250]]),
     ],
     props: [
       ['cottage-2', 398, 187], ['farmer', 246, 228, .9], ['cat', 362, 198, .82],
-      ['apple', 155, 156, 1.03], ['orange', 224, 142, 1.05], ['orange', 179, 202, .95],
+      ['apple', 155, 156, 1.03, 'young-fruit'], ['orange', 224, 142, 1.05], ['orange', 179, 202, .95],
       ['apple', 252, 189, .99], ['apple', 327, 168, .81],
       ['crate', 210, 218, .88], ['crate', 191, 221, .81], ['barrel', 228, 212, .83],
       ['bench', 300, 215, .91], ['lamp', 371, 203, .85],
