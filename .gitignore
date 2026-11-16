@@ -1,14 +1,15 @@
-﻿node_modules/
-dist/
+# Dependencies and build output
+node_modules/
+/dist/
+
+# Local settings and notes
 .env
 .env.local
-data/preview_*.png
-dev-notes/
-.workbuddy/
-.codebuddy/
-.setting.xyiot/
-__pycache__/
-*.pyc
-.venv/
+/dev-notes/
+/.workbuddy/
+/.codebuddy/
+/.setting.xyiot/
+
+# Logs and system files
 *.log
 .DS_Store

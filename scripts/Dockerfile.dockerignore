@@ -1,0 +1,10 @@
+*
+!package.json
+!package-lock.json
+!scripts/
+!scripts/serve-farm.mjs
+!src/
+!src/**
+!assets/
+!assets/runtime/
+!assets/runtime/**

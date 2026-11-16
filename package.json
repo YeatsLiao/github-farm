@@ -6,17 +6,12 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build-pages.mjs",
-    "build:star-farm": "node scripts/render/render-starter-farm.mjs",
+    "build:star-farm": "node scripts/render-farm.mjs",
     "test": "cd test && node --test",
     "test:star-farm": "npm test",
-    "preview:star-farm": "node scripts/render/preview-farm-themes.mjs",
-    "serve:star-farm": "node src/http/start-star-farm.js",
-    "art:star-farm": "node scripts/art/build-star-spring.mjs",
-    "legacy:dev": "node archive/contribution-farm/dev-server.mjs",
-    "legacy:build": "node archive/contribution-farm/src/index.js --mock",
-    "legacy:test": "node --test archive/contribution-farm/test/living-farm.test.js",
-    "prototype:test": "node --test archive/star-farm-prototype/blueprint.test.js",
-    "prototype:samples": "node archive/star-farm-prototype/render-samples.mjs"
+    "preview:star-farm": "node scripts/preview-farms.mjs",
+    "serve:star-farm": "node scripts/serve-farm.mjs",
+    "art:star-farm": "node scripts/build-atlas.mjs"
   },
   "keywords": [
     "github",
