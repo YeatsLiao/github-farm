@@ -1,0 +1,60 @@
+name: Publish Star Farm
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '23 1 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: star-farm-pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install Canvas system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential pkg-config python3 libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev fonts-dejavu-core
+      - run: npm ci
+      - run: npm test
+      - name: Render the repository farm
+        run: npm run build
+        env:
+          STAR_FARM_REPOSITORY: ${{ vars.STAR_FARM_REPOSITORY }}
+          STAR_FARM_GITHUB_TOKEN: ${{ github.token }}
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist/pages
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.publish.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: publish
+        uses: actions/deploy-pages@v4

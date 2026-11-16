@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f4eb">
+  <title>GitHub Farm · 让贡献生长</title>
+  <link rel="stylesheet" href="/web/style.css">
+  <script type="module" src="/web/app.js"></script>
+</head>
+<body>
+  <header class="header wrap">
+    <a class="brand" href="/" aria-label="GitHub Farm 首页"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 26V14M16 20C7 20 5 14 5 8c8 0 13 4 11 12ZM16 15C16 7 22 4 28 5c0 7-4 11-12 10Z"/></svg></span><span>GitHub <em>Farm</em></span></a>
+    <nav aria-label="页面导航"><span class="edition">春日手记 / VOL. 01</span><a href="https://github.com/YeatsLiao/github-farm" target="_blank" rel="noreferrer">项目源码 <span aria-hidden="true">↗</span></a></nav>
+  </header>
+  <main class="wrap">
+    <section class="intro">
+      <div><p class="eyebrow"><span></span> A LITTLE FARM, GROWN BY YOU</p><h1>你的代码，<span>正在发芽。</span></h1><p class="intro-copy">把每一次贡献，种成一片有风、有麦浪的小天地。</p></div>
+      <form id="farm-form" class="user-form">
+        <label for="username">来看看你的农场</label>
+        <div class="input-row"><span aria-hidden="true">@</span><input id="username" name="username" maxlength="39" placeholder="GitHub 用户名" value="YeatsLiao" required autocomplete="off" spellcheck="false"><button id="generate" type="submit">生成农场 <span aria-hidden="true">↗</span></button></div>
+        <div class="source-row"><label for="data-mode" class="sr-only">数据来源</label><select id="data-mode"><option value="demo">演示数据 · 无需授权</option value="github" disabled>GitHub 真实数据 · 需配置服务端 Token</option></select></div>
+      </form>
+    </section>
+    <div id="message" class="message" role="status" aria-live="polite" hidden></div>
+    <div class="workspace">
+      <section class="farm-panel" aria-label="动态农场预览">
+        <div class="farm-toolbar"><div class="farm-title"><span class="live-dot"></span><strong id="farm-name">YeatsLiao 的农场</strong><span id="source-badge" class="badge">演示</span></div><div class="view-actions"><div class="segmented" aria-label="光照"><button id="day" aria-pressed="true" type="button">☀ 晴昼</button><button id="evening" aria-pressed="false" type="button">☾ 暮色</button></div><button id="pause" class="icon-button" type="button" aria-label="暂停动画" title="暂停动画">Ⅱ</button></div></div>
+        <div class="canvas-shell" id="canvas-shell"><canvas id="farm" width="1536" height="1024" tabindex="0" aria-label="农场动画。点击作物查看周贡献，点击物件查看介绍。布置模式先选物件再点击空地，方向键微调，Esc取消选择。">浏览器不支持 Canvas。请使用现代浏览器查看，或下载 PNG。</canvas><div class="scene-label"><span class="scene-label-dot"></span><span id="scene-caption">春日 · 微风</span></div><div id="loading" class="loading">正在唤醒农场<span>准备春日素材…</span></div></div>
+        <div class="farm-caption"><span><i class="mini-leaf" aria-hidden="true">✧</i> 风会经过这里，贡献会留下痕迹。</span><span>点击作物或物件，读农场的故事 <span aria-hidden="true">↗</span></span></div>
+        <div class="layout-tools" aria-label="农场轻布置">
+          <button id="edit-layout" type="button" aria-pressed="false" disabled>布置庭院</button>
+          <button id="undo-layout" type="button" disabled>撤销</button>
+          <button id="reset-layout" type="button" disabled>恢复默认</button>
+          <span id="layout-status" role="status" aria-live="polite">可移动花草、树木、灯具与矿物。</span>
+        </div>
+        <p class="layout-note">布置仅保留在本次预览；切换账号或档位恢复默认，可导出 PNG 留存。</p>
+        <details class="asset-collection" id="asset-collection">
+          <summary>春日素材册 <span id="catalog-count">花草与居民 · 点击查看</span></summary>
+          <div id="asset-grid" class="asset-grid" aria-label="农场素材"></div>
+          <a class="catalog-link" href="/assets/spring/catalog.png" target="_blank" rel="noreferrer">查看完整素材联系表 ↗</a>
+          <a class="catalog-link" href="/assets/spring/resident-actions.png" target="_blank" rel="noreferrer">五位居民 · 四方向动作表 ↗</a>
+        </details>
+      </section>
+      <aside class="journal" aria-label="农场数据与设置">
+        <div class="journal-heading"><span class="eyebrow">YOUR GROWING STORY</span><span class="journal-icon" aria-hidden="true">✺</span><h2>生长手记</h2><p id="period">正在准备贡献数据</p></div>
+        <div class="total"><strong id="total">—</strong><span>次贡献，汇成这片风景</span></div>
+        <div class="stats"><div><strong id="weeks">—</strong><span>周贡献地块</span></div><div><strong id="chickens">—</strong><span>只小鸡</span></div><div><strong id="ripe">—</strong><span>簇丰收地块</span></div></div>
+        <section id="demo-controls" class="profile-control"><h3>试试不同的生长状态</h3><div class="profile-options" aria-label="演示贡献档位"><button data-profile="low" aria-pressed="false" type="button">初耕</button><button data-profile="medium" aria-pressed="true" type="button">生长</button><button data-profile="high" aria-pressed="false" type="button">丰收</button></div><p>低 / 中 / 高贡献演示，不是账号真实统计。</p></section>
+        <section class="inspector" aria-live="polite"><span class="eyebrow">一小块土地的故事</span><h3 id="crop-title">每一簇，都有来处。</h3><p id="crop-detail">点选田里的作物，查看对应日期、贡献量与生长阶段。</p></section>
+        <button id="download" class="download" type="button" disabled><span aria-hidden="true">↓</span> 保存此刻 · PNG</button>
+        <p class="export-note">网页里看它生长，图片里留住这一刻。</p>
+      </aside>
+    </div>
+    <section class="field-notes" aria-label="贡献映射说明"><div class="notes-title"><span class="eyebrow">HOW IT GROWS</span><h2>每一份耕耘，都算数。</h2></div><div class="note"><span class="note-number">01</span><div><h3>贡献变成作物</h3><p>麦子、胡萝卜、南瓜各有五阶段。按周贡献量升序布局，不是时间轴。</p></div></div><div class="note"><span class="note-number">02</span><div><h3>不忙碌，也有风景</h3><p>人物、池塘和花草陪伴空田；两只小鸡常驻，PR、语言与 Issue 带来额外点缀。</p></div></div></section>
+  </main>
+  <footer class="wrap footer"><span>GitHub Farm <span class="footer-dot">·</span> 给代码一点田园气息</span><span>春日动态样板 <span class="footer-dot">/</span> 美术与动画持续打磨中</span></footer>
+</body>
+</html>

@@ -1,17 +1,26 @@
 {
   "name": "github-farm",
   "version": "0.1.0",
-  "description": "Turn your GitHub contributions into a Stardew Valley-style pixel farm",
-  "main": "src/index.js",
+  "description": "Grow a pixel-art farm from a GitHub repository's stars",
+  "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node dev-server.mjs",
-    "build": "node src/index.js --mock",
-    "build:real": "node src/index.js"
+    "build": "node scripts/build-pages.mjs",
+    "build:star-farm": "node scripts/render/render-starter-farm.mjs",
+    "test": "node --test test",
+    "test:star-farm": "npm test",
+    "preview:star-farm": "node scripts/render/preview-farm-themes.mjs",
+    "serve:star-farm": "node src/http/start-star-farm.js",
+    "art:star-farm": "node scripts/art/build-star-spring.mjs",
+    "legacy:dev": "node archive/contribution-farm/dev-server.mjs",
+    "legacy:build": "node archive/contribution-farm/src/index.js --mock",
+    "legacy:test": "node --test archive/contribution-farm/test/living-farm.test.js",
+    "prototype:test": "node --test archive/star-farm-prototype/blueprint.test.js",
+    "prototype:samples": "node archive/star-farm-prototype/render-samples.mjs"
   },
   "keywords": [
     "github",
-    "contribution",
+    "stars",
     "visualization",
     "pixel-art",
     "stardew-valley",
@@ -24,9 +33,9 @@
     "url": "https://github.com/YeatsLiao/github-farm.git"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.19.0"
   },
-  "devDependencies": {
+  "dependencies": {
     "canvas": "^3.2.3"
   }
 }

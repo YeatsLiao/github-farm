@@ -1,0 +1,67 @@
+name: Generate Farm (Python)
+
+# 定时 + 手动触发，使用 Python 版生成器，自动提交 farm.png 到当前分支。
+# 触发时机：每天 UTC 0 点跑一次；也可在 Actions 页面手动触发。
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+    inputs:
+      username:
+        description: "GitHub username (optional, defaults to YeatsLiao)"
+        required: false
+        default: "YeatsLiao"
+      scale:
+        description: "Render scale factor (default 2 = 2432x1664)"
+        required: false
+        default: "2"
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: python/requirements.txt
+
+      - name: Install dependencies
+        working-directory: python
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Generate farm.png
+        working-directory: python
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FARM_USERNAME: ${{ github.event.inputs.username || 'YeatsLiao' }}
+          FARM_SCALE: ${{ github.event.inputs.scale || '2' }}
+        run: |
+          ARGS="--scale ${FARM_SCALE} --output ../dist/farm.png --username ${FARM_USERNAME}"
+          # 无 GITHUB_TOKEN 时自动 fallback 到 mock（CLI 已内置）
+          if [ -z "$GITHUB_TOKEN" ]; then
+            ARGS="$ARGS --mock"
+          fi
+          python farm.py $ARGS
+
+      - name: Commit & push farm.png
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add dist/farm.png
+          if git diff --staged --quiet; then
+            echo "No changes to farm.png, skip commit."
+          else
+            git commit -m "chore: regenerate farm.png [skip ci]"
+            git push
+          fi

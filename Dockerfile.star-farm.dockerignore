@@ -1,0 +1,10 @@
+*
+!package.json
+!package-lock.json
+!config/
+!config/**
+!src/
+!src/**
+!assets/
+!assets/runtime/
+!assets/runtime/**

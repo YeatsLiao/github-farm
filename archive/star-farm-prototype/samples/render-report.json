@@ -1,0 +1,74 @@
+[
+  {
+    "filename": "1-yeatsliao-github-farm-low.png",
+    "bytes": 349808,
+    "template": "woodland-garden",
+    "stage": 1,
+    "objects": 13,
+    "layoutVersion": "spring-seeded-1"
+  },
+  {
+    "filename": "1-yeatsliao-github-farm-mid.png",
+    "bytes": 354034,
+    "template": "woodland-garden",
+    "stage": 4,
+    "objects": 21,
+    "layoutVersion": "spring-seeded-1"
+  },
+  {
+    "filename": "1-yeatsliao-github-farm-high.png",
+    "bytes": 392396,
+    "template": "woodland-garden",
+    "stage": 13,
+    "objects": 34,
+    "layoutVersion": "spring-seeded-1"
+  },
+  {
+    "filename": "2-octocat-sunlit-orchard-low.png",
+    "bytes": 349039,
+    "template": "orchard-cove",
+    "stage": 1,
+    "objects": 9,
+    "layoutVersion": "spring-seeded-1"
+  },
+  {
+    "filename": "2-octocat-sunlit-orchard-mid.png",
+    "bytes": 353241,
+    "template": "orchard-cove",
+    "stage": 4,
+    "objects": 17,
+    "layoutVersion": "spring-seeded-1"
+  },
+  {
+    "filename": "2-octocat-sunlit-orchard-high.png",
+    "bytes": 391080,
+    "template": "orchard-cove",
+    "stage": 13,
+    "objects": 30,
+    "layoutVersion": "spring-seeded-1"
+  },
+  {
+    "filename": "3-mona-garden-notes-low.png",
+    "bytes": 352485,
+    "template": "lakeside-yard",
+    "stage": 1,
+    "objects": 15,
+    "layoutVersion": "spring-seeded-1"
+  },
+  {
+    "filename": "3-mona-garden-notes-mid.png",
+    "bytes": 357524,
+    "template": "lakeside-yard",
+    "stage": 4,
+    "objects": 23,
+    "layoutVersion": "spring-seeded-1"
+  },
+  {
+    "filename": "3-mona-garden-notes-high.png",
+    "bytes": 389934,
+    "template": "lakeside-yard",
+    "stage": 13,
+    "objects": 34,
+    "layoutVersion": "spring-seeded-1"
+  }
+]

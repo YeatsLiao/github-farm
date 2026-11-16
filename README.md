@@ -1,141 +1,33 @@
 # GitHub Farm
 
-**English** | [中文](./README.zh-CN.md)
+[简体中文](README.zh-CN.md) · [View the farm](https://yeatsliao.github.io/github-farm/)
 
-> Turn your GitHub contributions into a Stardew Valley-style pixel farm
+GitHub Farm turns a repository’s stars into a pixel-art farm. The repository ID gives the farm a stable layout. As stars accumulate, existing landmarks stay in place and new crops, animals, buildings, and decorations appear.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
-[![GitHub Stars](https://img.shields.io/github/stars/YeatsLiao/github-farm?style=social)](https://github.com/YeatsLiao/github-farm/stargazers)
+[![GitHub Farm and its star statistics](https://yeatsliao.github.io/github-farm/farm.png)](https://yeatsliao.github.io/github-farm/)
 
-> 🌱 **This project is early-stage and looking for contributors!** If you think this idea is cool, [star it](https://github.com/YeatsLiao/github-farm), [open an issue](https://github.com/YeatsLiao/github-farm/issues/new), or send a PR — every bit of help counts. See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to get started.
+## Add it to a README
 
-## What is this?
+Paste this line to show this repository’s farm. It includes the star count, stars gained over the last seven complete days when available, the current stage, and the next milestone.
 
-GitHub Farm visualizes your GitHub contribution data as a **Stardew Valley-style pixel farm**:
-
-- Commits = Crops - weekly contributions sorted left-to-right, growing from seed to harvest
-- Trees = Languages - your top programming languages appear as trees on the grassland
-- Animals = PRs - merged pull requests bring animals to your farm
-- Decorations = Issues - issue participation adds flowers and decorations
-
-## Preview
-
-**Farm Scene** — crops grow from seed to harvest, left to right:
-
-![Farm Concept](./docs/images/farm-concept.png)
-
-**Sprite Sheet** — pixel-art assets for crops, trees, animals, buildings and tools:
-
-![Sprite Sheet](./docs/images/sprite-sheet.png)
-
-## Quick Start
-
-### Local Development
-
-```bash
-npm install
-npm run dev      # Start dev server with live preview (mock data by default)
+```markdown
+[![GitHub Farm](https://yeatsliao.github.io/github-farm/farm.png)](https://yeatsliao.github.io/github-farm/)
 ```
 
-To use real GitHub data, set your token:
+To show your own repository’s farm, fork this project and follow the [Pages setup guide](docs/ARCHITECTURE.md#publish-your-own-farm). Actions checks the repository daily and publishes a fresh PNG. The stable image URL works in a README.
 
-```bash
-# Windows PowerShell
-$env:GITHUB_TOKEN="ghp_your_token_here"; npm run dev
+## Farm growth
 
-# macOS / Linux
-GITHUB_TOKEN=ghp_your_token npm run dev
+Every farm starts with a furnished settlement in one of three layouts. Early milestones are 1, 5, 10, 25, and 50 stars, followed by a new stage every 100 stars through the windmill at 5,000. The card keeps counting stars above that milestone.
+
+## Local development
+
+```sh
+npm ci
+npm test
+npm run build -- --repo YeatsLiao/github-farm
 ```
 
-The dev server generates a PNG, starts a local HTTP server at `http://localhost:3000`, and opens your browser automatically. Edit code → Ctrl+C → `npm run dev` to refresh.
+Open `dist/pages/index.html` to see the Pages output. The [project guide](docs/ARCHITECTURE.md) covers source files, assets, and deployment.
 
-### Generate PNG only
-
-```bash
-npm run build          # Generate with mock data → dist/farm.png
-npm run build:real     # Generate with real data (requires GITHUB_TOKEN)
-```
-
-### As GitHub Action
-
-Add workflow to your `username/username` repo:
-
-```yaml
-name: Generate Farm
-on:
-  schedule:
-    - cron: '0 0 * * *'
-  workflow_dispatch:
-jobs:
-  generate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: YeatsLiao/github-farm@main
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          output: farm.png
-          theme: stardew
-```
-
-## Data Mapping
-
-| GitHub Data | Farm Element | Description |
-|---|---|---|
-| Weekly contributions (sorted) | Crop growth stage | 5 stages: seed → sprout → growing → tall → harvest |
-| Top programming languages | Trees | Each language = one tree, up to 5 |
-| Merged PRs | Animals | 1 animal per 8 PRs, up to 5 |
-| Issue participation | Decorations | 1 decoration per 6 issues, up to 4 |
-| Streak ≥ 30 days | Scarecrow | Placed at field edge |
-
-## Project Structure
-
-```
-github-farm/
-├── src/
-│   ├── index.js           # Main entry + CLI
-│   ├── fetcher.js         # GitHub GraphQL API + mock data
-│   ├── renderer.js        # Canvas pixel-art renderer
-│   ├── farm-layout.js     # Farm layout algorithm
-│   └── themes/
-│       └── stardew.js     # Stardew Valley theme config
-├── assets/
-│   ├── sprites/cropped/   # Individual pixel sprites (crops, trees, animals)
-│   └── scenes/            # Background image
-├── dev-server.mjs         # Local dev server with live preview
-├── dist/                  # Build output (PNG)
-├── docs/
-│   ├── PRD.md             # Product requirements
-│   ├── ARCHITECTURE.md    # Architecture design
-│   └── DEVLOG.md          # Dev notes & pitfalls
-└── package.json
-```
-
-## Tech Stack
-
-- **Node.js** - Runtime
-- **Canvas** (npm `canvas`) - Pixel-art PNG rendering
-- **GitHub GraphQL API** - Contribution data
-- **GitHub Actions** - Automation (planned)
-
-## Roadmap
-
-- [x] Canvas pixel-art renderer
-- [x] 5-stage crop system with sorted column layout
-- [x] Trees, animals, decorations from GitHub stats
-- [x] Local dev server with live preview
-- [ ] GitHub Action wrapper
-- [ ] Multi-theme support (4 seasons)
-- [ ] Online preview/config tool
-
-## Documentation
-
-| Doc | Description |
-|-----|-------------|
-| [PRD.md](./docs/PRD.md) | Product requirements — features, user scenarios, competitors |
-| [ARCHITECTURE.md](./docs/ARCHITECTURE.md) | Architecture — module design, data flow, extension points |
-| [DEVLOG.md](./docs/DEVLOG.md) | Dev log — renderer iterations, pitfalls |
-
-## License
-
-MIT (c) YeatsLiao
+[Contributing](CONTRIBUTING.md) · [MIT License](LICENSE)

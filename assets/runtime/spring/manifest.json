@@ -1,0 +1,992 @@
+{
+  "schemaVersion": 1,
+  "artVersion": "star-spring-1",
+  "sprites": {
+    "cottage-1": {
+      "rect": [
+        3,
+        3,
+        92,
+        116
+      ],
+      "pivot": [
+        65,
+        116
+      ],
+      "visualBounds": [
+        -65,
+        -116,
+        92,
+        116
+      ],
+      "footprint": [
+        40,
+        16
+      ],
+      "sourceId": "buildings",
+      "sourceRect": [
+        90,
+        57,
+        334,
+        421
+      ]
+    },
+    "cottage-2": {
+      "rect": [
+        131,
+        3,
+        92,
+        116
+      ],
+      "pivot": [
+        65,
+        116
+      ],
+      "visualBounds": [
+        -65,
+        -116,
+        92,
+        116
+      ],
+      "footprint": [
+        40,
+        16
+      ],
+      "sourceId": "buildings",
+      "sourceRect": [
+        602,
+        57,
+        334,
+        421
+      ]
+    },
+    "cottage-3": {
+      "rect": [
+        259,
+        3,
+        120,
+        116
+      ],
+      "pivot": [
+        84,
+        116
+      ],
+      "visualBounds": [
+        -84,
+        -116,
+        120,
+        116
+      ],
+      "footprint": [
+        40,
+        16
+      ],
+      "sourceId": "buildings",
+      "sourceRect": [
+        1030,
+        57,
+        437,
+        421
+      ]
+    },
+    "coop": {
+      "rect": [
+        387,
+        3,
+        75,
+        90
+      ],
+      "pivot": [
+        35,
+        90
+      ],
+      "visualBounds": [
+        -35,
+        -90,
+        75,
+        90
+      ],
+      "footprint": [
+        40,
+        16
+      ],
+      "sourceId": "buildings",
+      "sourceRect": [
+        111,
+        611,
+        315,
+        377
+      ]
+    },
+    "barn": {
+      "rect": [
+        515,
+        3,
+        106,
+        110
+      ],
+      "pivot": [
+        53,
+        110
+      ],
+      "visualBounds": [
+        -53,
+        -110,
+        106,
+        110
+      ],
+      "footprint": [
+        40,
+        16
+      ],
+      "sourceId": "buildings",
+      "sourceRect": [
+        570,
+        565,
+        396,
+        412
+      ]
+    },
+    "windmill": {
+      "rect": [
+        643,
+        3,
+        82,
+        115
+      ],
+      "pivot": [
+        41,
+        115
+      ],
+      "visualBounds": [
+        -41,
+        -115,
+        82,
+        115
+      ],
+      "footprint": [
+        40,
+        16
+      ],
+      "sourceId": "buildings",
+      "sourceRect": [
+        1117,
+        538,
+        328,
+        458
+      ]
+    },
+    "oak": {
+      "rect": [
+        771,
+        3,
+        72,
+        77
+      ],
+      "pivot": [
+        36,
+        77
+      ],
+      "visualBounds": [
+        -36,
+        -77,
+        72,
+        77
+      ],
+      "footprint": [
+        40,
+        16
+      ],
+      "sourceId": "nature",
+      "sourceRect": [
+        35,
+        28,
+        297,
+        317
+      ]
+    },
+    "pine": {
+      "rect": [
+        899,
+        3,
+        56,
+        70
+      ],
+      "pivot": [
+        28,
+        70
+      ],
+      "visualBounds": [
+        -28,
+        -70,
+        56,
+        70
+      ],
+      "footprint": [
+        40,
+        16
+      ],
+      "sourceId": "nature",
+      "sourceRect": [
+        417,
+        24,
+        255,
+        320
+      ]
+    },
+    "apple": {
+      "rect": [
+        3,
+        131,
+        64,
+        68
+      ],
+      "pivot": [
+        32,
+        68
+      ],
+      "visualBounds": [
+        -32,
+        -68,
+        64,
+        68
+      ],
+      "footprint": [
+        40,
+        16
+      ],
+      "sourceId": "nature",
+      "sourceRect": [
+        760,
+        35,
+        287,
+        307
+      ]
+    },
+    "orange": {
+      "rect": [
+        131,
+        131,
+        64,
+        68
+      ],
+      "pivot": [
+        32,
+        68
+      ],
+      "visualBounds": [
+        -32,
+        -68,
+        64,
+        68
+      ],
+      "footprint": [
+        40,
+        16
+      ],
+      "sourceId": "nature",
+      "sourceRect": [
+        1124,
+        35,
+        289,
+        308
+      ]
+    },
+    "berry": {
+      "rect": [
+        259,
+        131,
+        30,
+        24
+      ],
+      "pivot": [
+        15,
+        24
+      ],
+      "visualBounds": [
+        -15,
+        -24,
+        30,
+        24
+      ],
+      "footprint": [
+        30,
+        16
+      ],
+      "sourceId": "nature",
+      "sourceRect": [
+        52,
+        435,
+        266,
+        217
+      ]
+    },
+    "sunflower": {
+      "rect": [
+        387,
+        131,
+        24,
+        22
+      ],
+      "pivot": [
+        12,
+        22
+      ],
+      "visualBounds": [
+        -12,
+        -22,
+        24,
+        22
+      ],
+      "footprint": [
+        24,
+        16
+      ],
+      "sourceId": "nature",
+      "sourceRect": [
+        411,
+        424,
+        257,
+        232
+      ]
+    },
+    "hydrangea": {
+      "rect": [
+        515,
+        131,
+        28,
+        22
+      ],
+      "pivot": [
+        14,
+        22
+      ],
+      "visualBounds": [
+        -14,
+        -22,
+        28,
+        22
+      ],
+      "footprint": [
+        28,
+        16
+      ],
+      "sourceId": "nature",
+      "sourceRect": [
+        764,
+        435,
+        283,
+        221
+      ]
+    },
+    "daisy": {
+      "rect": [
+        643,
+        131,
+        22,
+        17
+      ],
+      "pivot": [
+        11,
+        17
+      ],
+      "visualBounds": [
+        -11,
+        -17,
+        22,
+        17
+      ],
+      "footprint": [
+        22,
+        16
+      ],
+      "sourceId": "nature",
+      "sourceRect": [
+        1128,
+        441,
+        275,
+        209
+      ]
+    },
+    "reeds": {
+      "rect": [
+        771,
+        131,
+        26,
+        29
+      ],
+      "pivot": [
+        13,
+        29
+      ],
+      "visualBounds": [
+        -13,
+        -29,
+        26,
+        29
+      ],
+      "footprint": [
+        26,
+        16
+      ],
+      "sourceId": "nature",
+      "sourceRect": [
+        65,
+        761,
+        238,
+        261
+      ]
+    },
+    "waterlily": {
+      "rect": [
+        899,
+        131,
+        19,
+        14
+      ],
+      "pivot": [
+        10,
+        14
+      ],
+      "visualBounds": [
+        -10,
+        -14,
+        19,
+        14
+      ],
+      "footprint": [
+        19,
+        14
+      ],
+      "sourceId": "nature",
+      "sourceRect": [
+        412,
+        806,
+        260,
+        194
+      ]
+    },
+    "rock": {
+      "rect": [
+        3,
+        259,
+        32,
+        20
+      ],
+      "pivot": [
+        16,
+        20
+      ],
+      "visualBounds": [
+        -16,
+        -20,
+        32,
+        20
+      ],
+      "footprint": [
+        32,
+        16
+      ],
+      "sourceId": "nature",
+      "sourceRect": [
+        759,
+        812,
+        288,
+        182
+      ]
+    },
+    "fern": {
+      "rect": [
+        131,
+        259,
+        24,
+        19
+      ],
+      "pivot": [
+        12,
+        19
+      ],
+      "visualBounds": [
+        -12,
+        -19,
+        24,
+        19
+      ],
+      "footprint": [
+        24,
+        16
+      ],
+      "sourceId": "nature",
+      "sourceRect": [
+        1128,
+        781,
+        275,
+        218
+      ]
+    },
+    "tomato": {
+      "rect": [
+        259,
+        259,
+        18,
+        25
+      ],
+      "pivot": [
+        9,
+        25
+      ],
+      "visualBounds": [
+        -9,
+        -25,
+        18,
+        25
+      ],
+      "footprint": [
+        18,
+        16
+      ],
+      "sourceId": "props",
+      "sourceRect": [
+        73,
+        47,
+        171,
+        240
+      ]
+    },
+    "carrot": {
+      "rect": [
+        387,
+        259,
+        16,
+        18
+      ],
+      "pivot": [
+        8,
+        18
+      ],
+      "visualBounds": [
+        -8,
+        -18,
+        16,
+        18
+      ],
+      "footprint": [
+        16,
+        16
+      ],
+      "sourceId": "props",
+      "sourceRect": [
+        385,
+        75,
+        173,
+        199
+      ]
+    },
+    "wheat": {
+      "rect": [
+        515,
+        259,
+        18,
+        21
+      ],
+      "pivot": [
+        9,
+        21
+      ],
+      "visualBounds": [
+        -9,
+        -21,
+        18,
+        21
+      ],
+      "footprint": [
+        18,
+        16
+      ],
+      "sourceId": "props",
+      "sourceRect": [
+        685,
+        50,
+        189,
+        224
+      ]
+    },
+    "pumpkin": {
+      "rect": [
+        643,
+        259,
+        22,
+        19
+      ],
+      "pivot": [
+        11,
+        19
+      ],
+      "visualBounds": [
+        -11,
+        -19,
+        22,
+        19
+      ],
+      "footprint": [
+        22,
+        16
+      ],
+      "sourceId": "props",
+      "sourceRect": [
+        979,
+        89,
+        218,
+        187
+      ]
+    },
+    "sprout": {
+      "rect": [
+        771,
+        259,
+        11,
+        8
+      ],
+      "pivot": [
+        6,
+        8
+      ],
+      "visualBounds": [
+        -6,
+        -8,
+        11,
+        8
+      ],
+      "footprint": [
+        11,
+        8
+      ],
+      "sourceId": "props",
+      "sourceRect": [
+        103,
+        463,
+        109,
+        80
+      ]
+    },
+    "farmer": {
+      "rect": [
+        899,
+        259,
+        24,
+        27
+      ],
+      "pivot": [
+        12,
+        27
+      ],
+      "visualBounds": [
+        -12,
+        -27,
+        24,
+        27
+      ],
+      "footprint": [
+        24,
+        16
+      ],
+      "sourceId": "props",
+      "sourceRect": [
+        372,
+        350,
+        211,
+        238
+      ]
+    },
+    "chicken": {
+      "rect": [
+        3,
+        387,
+        16,
+        17
+      ],
+      "pivot": [
+        8,
+        17
+      ],
+      "visualBounds": [
+        -8,
+        -17,
+        16,
+        17
+      ],
+      "footprint": [
+        16,
+        16
+      ],
+      "sourceId": "props",
+      "sourceRect": [
+        692,
+        400,
+        171,
+        181
+      ]
+    },
+    "cat": {
+      "rect": [
+        131,
+        387,
+        16,
+        18
+      ],
+      "pivot": [
+        8,
+        18
+      ],
+      "visualBounds": [
+        -8,
+        -18,
+        16,
+        18
+      ],
+      "footprint": [
+        16,
+        16
+      ],
+      "sourceId": "props",
+      "sourceRect": [
+        1016,
+        390,
+        171,
+        188
+      ]
+    },
+    "duck": {
+      "rect": [
+        259,
+        387,
+        16,
+        18
+      ],
+      "pivot": [
+        8,
+        18
+      ],
+      "visualBounds": [
+        -8,
+        -18,
+        16,
+        18
+      ],
+      "footprint": [
+        16,
+        16
+      ],
+      "sourceId": "props",
+      "sourceRect": [
+        76,
+        702,
+        164,
+        181
+      ]
+    },
+    "well": {
+      "rect": [
+        387,
+        387,
+        32,
+        38
+      ],
+      "pivot": [
+        16,
+        38
+      ],
+      "visualBounds": [
+        -16,
+        -38,
+        32,
+        38
+      ],
+      "footprint": [
+        32,
+        16
+      ],
+      "sourceId": "props",
+      "sourceRect": [
+        360,
+        660,
+        217,
+        257
+      ]
+    },
+    "bench": {
+      "rect": [
+        515,
+        387,
+        32,
+        22
+      ],
+      "pivot": [
+        16,
+        22
+      ],
+      "visualBounds": [
+        -16,
+        -22,
+        32,
+        22
+      ],
+      "footprint": [
+        32,
+        16
+      ],
+      "sourceId": "props",
+      "sourceRect": [
+        665,
+        722,
+        237,
+        163
+      ]
+    },
+    "barrel": {
+      "rect": [
+        643,
+        387,
+        18,
+        21
+      ],
+      "pivot": [
+        9,
+        21
+      ],
+      "visualBounds": [
+        -9,
+        -21,
+        18,
+        21
+      ],
+      "footprint": [
+        18,
+        16
+      ],
+      "sourceId": "props",
+      "sourceRect": [
+        1017,
+        705,
+        161,
+        190
+      ]
+    },
+    "lamp": {
+      "rect": [
+        771,
+        387,
+        14,
+        21
+      ],
+      "pivot": [
+        7,
+        21
+      ],
+      "visualBounds": [
+        -7,
+        -21,
+        14,
+        21
+      ],
+      "footprint": [
+        14,
+        16
+      ],
+      "sourceId": "props",
+      "sourceRect": [
+        94,
+        1017,
+        127,
+        188
+      ]
+    },
+    "fence": {
+      "rect": [
+        899,
+        387,
+        31,
+        22
+      ],
+      "pivot": [
+        16,
+        22
+      ],
+      "visualBounds": [
+        -16,
+        -22,
+        31,
+        22
+      ],
+      "footprint": [
+        31,
+        16
+      ],
+      "sourceId": "props",
+      "sourceRect": [
+        362,
+        1043,
+        216,
+        155
+      ]
+    },
+    "crate": {
+      "rect": [
+        3,
+        515,
+        23,
+        20
+      ],
+      "pivot": [
+        12,
+        20
+      ],
+      "visualBounds": [
+        -12,
+        -20,
+        23,
+        20
+      ],
+      "footprint": [
+        23,
+        16
+      ],
+      "sourceId": "props",
+      "sourceRect": [
+        669,
+        1021,
+        220,
+        188
+      ]
+    },
+    "scarecrow": {
+      "rect": [
+        131,
+        515,
+        24,
+        27
+      ],
+      "pivot": [
+        12,
+        27
+      ],
+      "visualBounds": [
+        -12,
+        -27,
+        24,
+        27
+      ],
+      "footprint": [
+        24,
+        16
+      ],
+      "sourceId": "props",
+      "sourceRect": [
+        980,
+        964,
+        232,
+        261
+      ]
+    }
+  }
+}

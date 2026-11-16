@@ -5,5 +5,10 @@ dist/
 data/preview_*.png
 dev-notes/
 .workbuddy/
+.codebuddy/
+.setting.xyiot/
+__pycache__/
+*.pyc
+.venv/
 *.log
 .DS_Store
