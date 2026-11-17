@@ -28,3 +28,7 @@
 - **储草棚**为敞口低棚，暖棕瓦、两根木柱和阴影中的两叠草捆，低门槛接住屋身。原稿 `17cd51198e834dc16654b5d3b342957ad74c1156ad0714dfd83892b881e5abdb`。
 
 [风格参考与设计稿](https://github.com/YeatsLiao/github-farm/tree/65b831e396cdd3d83d175186cfd340e7146ac3be/docs/design/star-farm-v1)及[生成与编译记录](https://github.com/YeatsLiao/github-farm/tree/65b831e396cdd3d83d175186cfd340e7146ac3be/assets/source/spring)可在整理前的 Git 提交查看。
+
+## 卡片字体
+
+浏览器和 Actions 用同一份 [IBM Plex Mono Medium](../assets/runtime/ibm-plex-mono-medium.ttf) 绘制卡片标题和统计。字体取自 [Google Fonts 的固定版本](https://github.com/google/fonts/tree/431022a4eeb0e1009ba0126f41353d8ca2375a2a/ofl/ibmplexmono)，SHA-256 为 `a9b4c49bb299e05b5f6c481e7fb5e78943d2793249a0c8874ab574a2d1ea6755`。[SIL Open Font License 1.1](../assets/runtime/ibm-plex-mono-OFL.txt)

@@ -1,6 +1,6 @@
 import { createStarterScene, farmMilestones } from './src/farm/scene.js';
 import { fetchRepositoryStarsWithCache, parseRepository, RepositoryLookupError } from './src/repository-stars.js';
-import { drawStarCard } from './src/render/draw-card.js';
+import { cardFont, drawStarCard } from './src/render/draw-card.js';
 
 const form = document.querySelector('#farm-form');
 const input = document.querySelector('#repository');
@@ -42,13 +42,22 @@ function repositoryName(inputValue) {
   return `${owner}/${repo}`;
 }
 
+async function loadCardFont() {
+  try {
+    const font = new FontFace(cardFont.family, `url("${cardFont.url.href}")`, {weight: cardFont.weight});
+    document.fonts.add(await font.load());
+  } catch {
+    // The shared canvas renderer uses the fallback font if this asset cannot load.
+  }
+}
+
 async function loadArtwork() {
   if (!artwork) {
     artwork = (async () => {
       const atlas = new Image();
       atlas.src = new URL('./assets/runtime/spring-atlas.png', import.meta.url);
       const manifestUrl = new URL('./assets/runtime/spring-manifest.json', import.meta.url);
-      const [response] = await Promise.all([fetch(manifestUrl), atlas.decode()]);
+      const [response] = await Promise.all([fetch(manifestUrl), atlas.decode(), loadCardFont()]);
       if (!response.ok) throw new Error('Could not load the sprite manifest');
       return {atlas, manifest: await response.json()};
     })().catch(error => {

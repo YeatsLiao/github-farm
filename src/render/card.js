@@ -1,6 +1,9 @@
-import { createCanvas, loadImage } from 'canvas';
+import { createCanvas, loadImage, registerFont } from 'canvas';
 import { readFile } from 'node:fs/promises';
-import { drawStarCard } from './draw-card.js';
+import { fileURLToPath } from 'node:url';
+import { cardFont, drawStarCard } from './draw-card.js';
+
+registerFont(fileURLToPath(cardFont.url), {family: cardFont.family, weight: cardFont.weight});
 
 let artPromise;
 function assets() {

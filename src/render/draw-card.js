@@ -3,6 +3,16 @@ import { randomFor } from '../farm/seed.js';
 import { paintStarGround } from './ground.js';
 import { yardProps } from './props.js';
 
+export const cardFont = {
+  family: 'IBM Plex Mono',
+  weight: '500',
+  url: new URL('../../assets/runtime/ibm-plex-mono-medium.ttf', import.meta.url),
+};
+
+function cardText(size) {
+  return `${cardFont.weight} ${size}px "${cardFont.family}", Consolas, monospace`;
+}
+
 function fill(ctx, color, x, y, width, height) {
   ctx.fillStyle = color;
   ctx.fillRect(x, y, width, height);
@@ -121,11 +131,11 @@ export function drawStarCard(scene, art, createCanvas, {
   ctx.imageSmoothingEnabled = false;
   fill(ctx, '#f7efd9', 0, 0, 640, 480);
   ctx.fillStyle = '#503824';
-  ctx.font = 'bold 15px monospace';
+  ctx.font = cardText(17);
   ctx.fillText(fitTitle(ctx, scene.snapshot.fullName, 580), 42, 23);
-  ctx.font = '10px monospace';
-  ctx.fillStyle = '#8c7251';
-  ctx.fillText(scene.name.toUpperCase(), 42, 38);
+  ctx.font = cardText(11);
+  ctx.fillStyle = '#705536';
+  ctx.fillText(scene.name.toUpperCase(), 42, 39);
   sprite(ctx, art, {type: 'sprout', x: 22, y: 29, scale: 1.4, ground: false});
 
   // Render the farm at its native pixel size, then double it as a single scene.
@@ -144,17 +154,16 @@ export function drawStarCard(scene, art, createCanvas, {
 
   const s = scene.snapshot;
   ctx.fillStyle = '#503824';
-  ctx.font = 'bold 16px monospace';
-  ctx.fillText('STARS ' + s.stars.toLocaleString('en-US'), 18, 433);
-  ctx.font = 'bold 11px monospace';
-  ctx.fillText('NEW / 7D ' + (s.newStars7d == null ? '--' : '+' + s.newStars7d), 238, 432);
+  ctx.font = cardText(18);
+  ctx.fillText('STARS ' + s.stars.toLocaleString('en-US'), 18, 433, 204);
+  ctx.font = cardText(12);
+  ctx.fillText('NEW / 7D ' + (s.newStars7d == null ? '--' : '+' + s.newStars7d), 238, 432, 186);
   ctx.fillText(`STAGE ${String(scene.stage.number).padStart(2, '0')} / ${scene.stage.total}`, 440, 432);
-  ctx.font = '10px monospace';
-  ctx.fillStyle = '#8c7251';
+  ctx.font = cardText(11);
+  ctx.fillStyle = '#705536';
   const milestone = scene.stage.next;
   const next = milestone == null ? scene.stage.endLabel ?? 'FULLY GROWN' : `NEXT STAGE: ${milestone.toLocaleString('en-US')}  /  ${(milestone - s.stars).toLocaleString('en-US')} TO GO`;
   ctx.fillText(next, 18, 452);
-  ctx.font = '9px monospace';
   const stamp = s.source === 'preview'
     ? 'MILESTONE PREVIEW  |  SPRING'
     : s.source === 'github'
