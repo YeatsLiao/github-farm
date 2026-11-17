@@ -12,7 +12,10 @@
 
 ## 放进 README
 
-生成后可分享页面地址或下载当前真实档位的 PNG。复制这一行即可嵌入本仓库的示例卡片。要让自己仓库的 README 卡片定期更新，请按 [Pages 部署指南](DEPLOYMENT.md) 设置。
+- **分享农场。** 复制生成后的页面地址，或下载 PNG 放进自己的仓库。
+- **定期更新图片。** 按指南配置 GitHub Actions 和 Pages，为要展示的公开仓库每天重新生成 PNG。[Pages 部署指南](DEPLOYMENT.md#发布可自动更新的-readme-图片)
+
+下面这一行嵌入本项目已发布的农场图。
 
 ```markdown
 [![GitHub Farm](https://yeatsliao.github.io/github-farm/farm.png)](https://yeatsliao.github.io/github-farm/)
@@ -29,4 +32,4 @@ python -m http.server 8080 --bind 127.0.0.1 --directory dist/pages
 
 打开 [localhost:8080](http://localhost:8080) 试用生成器。
 
-[项目结构](ARCHITECTURE.md) · [素材规范](ASSETS.md) · [参与贡献](CONTRIBUTING.md) · [MIT 许可证](../LICENSE)
+[项目结构](ARCHITECTURE.md) · [交付与后续计划](UPGRADE-PLAN.md) · [素材规范](ASSETS.md) · [参与贡献](CONTRIBUTING.md) · [MIT 许可证](../LICENSE)

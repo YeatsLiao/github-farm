@@ -1,10 +1,10 @@
-# GitHub Farm 升级计划
+# GitHub Farm 交付与后续计划
 
-## 当前范围
+## 当前交付
 
-农场以静态图呈现。时间轴切换档位，地点标记按需显示，下载保持当前真实 Stars。继续沿用已选定的温暖像素风，让低 Star 农场从第一个档位就有完整院子。
+当前版本已在 GitHub Pages 上交付。任意公开仓库可生成静态农场，支持分享、切换成长档位、查看地点和下载 PNG。Actions 每天更新本项目的 README 农场图，其他仓库可按同一方式配置。[打开生成器](https://yeatsliao.github.io/github-farm/) · [部署指南](DEPLOYMENT.md)
 
-## 第一批 · 统一溪边果园的接缝
+## 已完成 · 岸线、木台与围栏
 
 - 岸线用不规则的湿土、浅滩、深水过渡。零散碎石、芦苇和植被簇顺岸分布，留出通往水边的路径。
 - 过水码头从岸上的路接入，木台有统一的板缝、端板与支脚。门前石块保留清楚的层次。
@@ -12,19 +12,13 @@
 - 编译图集时清理小块游离像素。按浅草、深草、泥土和水边检查轮廓，尤其关注素材交界。
 - 固定镜头对比 0、25、100 和 300 Stars。验收岸线、收获台、围栏入口的放大图以及 README 宽度下的识别度。
 
-## 第二批 · 推广到菜园和牧场
+## 已完成 · 菜园和牧场的地块与通道
 
 - 庭院菜园沿地块布置围栏，入口朝向小路，晾晒区接近菜地和院子。
 - 谷仓牧场沿实际边界围合，鸡在陆地活动的位置和鸭子的浅水区各自明确，牧场扩建从预留缺口接入。
 - 建筑、田地和围栏参与道路转弯的避让。测试覆盖扩建路连通性、围栏入口、水陆摆件和作物占地。
 
-## 验收入口
-
-- [四阶段对照](https://yeatsliao.github.io/github-farm/orchard-growth.png)
-- [岸线、收获台与围栏放大图](https://yeatsliao.github.io/github-farm/orchard-details.png)
-- [线上静态果园](https://yeatsliao.github.io/github-farm/?repo=octocat%2Fgit-consortium)
-
-## 三种农场的作业素材
+## 0–100 Stars 起步作业区
 
 - **庭院菜园**开局有育苗盘和浇水壶，25 Stars 架起番茄竹架，100 Stars 在田埂的小路旁开工具棚。
 - **溪边果园**开局有采果梯和空果筐，25 Stars 在分拣台旁添上满果筐，100 Stars 接入绿顶果酱棚。
@@ -48,4 +42,14 @@
 
 [三种农场的 300–1,000 Stars 同镜头对照](https://yeatsliao.github.io/github-farm/farm-workyards.png)
 
-项目继续使用现有目录。素材原稿放在 `assets/source/`，运行时图集放在 `assets/runtime/`，局部预览图放在 `dist/`。网页和 Actions 复用同一套卡片绘制。
+## 验收记录
+
+- 已检查三种农场 0、5、25、100、300 Stars 在 320 像素宽的显示效果，以及 300–1,000 Stars 的同镜头成长对照。
+- 已验收限流后的重试、保存数据的时间、地点解锁、手机布局和 1280×960 PNG 下载。当前版本的 11 项自动测试通过。[Pages 发布记录](https://github.com/YeatsLiao/github-farm/actions/runs/44005645552)
+- [果园四阶段对照](https://yeatsliao.github.io/github-farm/orchard-growth.png) · [岸线、收获台与围栏放大图](https://yeatsliao.github.io/github-farm/orchard-details.png) · [线上静态果园](https://yeatsliao.github.io/github-farm/?repo=octocat%2Fgit-consortium)
+
+## 后续主题
+
+- 任意公开仓库的一行自动更新嵌图暂缓发布。已完成图片服务接入与本地验收，启用方式见[可选的图片服务](DEPLOYMENT.md#可选的图片服务)。
+- 1,100–5,000 Stars 已有继续成长的规则和风车里程碑。各布局的高星作业细节可留到后续素材批次。
+- 动画、日夜、天气和节日留到后续主题。
