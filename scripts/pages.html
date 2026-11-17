@@ -9,7 +9,8 @@
     html { color-scheme: light; background: #faf4e4; color: #39291f; }
     body { margin: 0; font: 1rem/1.5 system-ui, sans-serif; }
     main { max-width: 960px; margin: 0 auto; padding: clamp(1rem, 4vw, 2rem) 1rem; }
-    h1 { display: flex; align-items: center; gap: .625rem; font-size: clamp(1.75rem, 4vw, 2.75rem); line-height: 1.15; margin: 0 0 1.25rem; }
+    .site-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem 1rem; margin: 0 0 1.25rem; }
+    h1 { display: flex; align-items: center; gap: .625rem; font-size: clamp(1.75rem, 4vw, 2.75rem); line-height: 1.15; margin: 0; }
     .farm-icon { image-rendering: pixelated; }
     label { display: block; font-weight: 650; margin-bottom: .375rem; }
     .fields { display: flex; flex-wrap: wrap; gap: .5rem; }
@@ -50,13 +51,17 @@
     #copy-status { margin: .375rem 0 0; font-size: .875rem; }
     #copy-status:empty { display: none; }
     a { color: #5b3e2c; }
+    .site-header a { padding: .35rem .65rem; text-decoration: none; }
     :focus-visible { outline: 2px solid #415f37; outline-offset: 3px; }
   </style>
   <script type="module" src="./app.js"></script>
 </head>
 <body>
   <main>
-    <h1><img class="farm-icon" src="./favicon.png" width="32" height="32" alt="">GitHub Farm</h1>
+    <header class="site-header">
+      <h1><img class="farm-icon" src="./favicon.png" width="32" height="32" alt="">GitHub Farm</h1>
+      <a class="quiet-button" href="https://github.com/YeatsLiao/github-farm">View on GitHub</a>
+    </header>
     <form id="farm-form" hidden>
       <label for="repository">Public GitHub repository</label>
       <div class="fields">
