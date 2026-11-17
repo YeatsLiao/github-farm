@@ -19,7 +19,7 @@
 
 ### 作业棚屋
 
-[春季作业棚屋素材](../assets/source/spring-workshops.png)是三张图像生成原稿裁切、保留透明通道并拼成的一排。图集现有 37 帧，另有 9 件配套作业道具在 [props.js](../src/render/props.js) 用原生像素构建。
+[春季作业棚屋素材](../assets/source/spring-workshops.png)是三张图像生成原稿裁切、保留透明通道并拼成的一排。图集现有 37 帧。小型作业道具在 [props.js](../src/render/props.js) 用原生像素构建，包括起步阶段的农具和 200–300 Stars 扩建区的出货、果箱交接与集蛋用具。
 
 生成提示共用 [春季建筑图](../assets/source/spring-buildings.png) 作画风参考。三件分别独立生成，均要求暖赭色、蜂蜜木色和奶油色石块，棕色描边，正面浅俯视，左上方光照，透明背景和清楚的像素轮廓。无场景底、外投影、白边、文字、附加物。用途和原稿 SHA-256 如下。
 

@@ -32,4 +32,12 @@
 
 [三种农场的 0、25、100 Stars 对照](https://yeatsliao.github.io/github-farm/farm-materials.png)
 
+## 200–300 Stars 扩建
+
+- **庭院菜园**在 200 Stars 接通出货区，设带篷柜台、手推车和待种的新田。300 Stars 新田长出作物，柜台旁出现装好的菜箱。
+- **溪边果园**在 200 Stars 把分拣台和旧码头接到岸边交接区，增设果箱架和拖车。300 Stars 给旧码头添系船桩，主屋另一侧扩种果树。
+- **谷仓牧场**在 200 Stars 接入第二座鸡舍，沿门前的路设分拣台和产蛋箱。300 Stars 在新增的围栏入口立门柱，扩展鸡的活动范围。
+
+[三种农场的 100、200、300 Stars 同镜头对照](https://yeatsliao.github.io/github-farm/farm-expansions.png)
+
 项目继续使用现有目录。素材原稿放在 `assets/source/`，运行时图集放在 `assets/runtime/`，局部预览图放在 `dist/`。网页和 Actions 复用同一套卡片绘制。
