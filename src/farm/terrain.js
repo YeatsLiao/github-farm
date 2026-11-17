@@ -31,14 +31,16 @@ export function routeDistance(routes, x, y) {
 const footprints = {
   'cottage-1': [60, 13], 'cottage-2': [65, 14], 'cottage-3': [76, 15],
   coop: [44, 10], barn: [55, 12], windmill: [40, 11],
+  'jam-shed': [55, 10], 'tool-shed': [24, 8], 'hay-shed': [57, 9],
   well: [20, 7], bench: [26, 6], 'harvest-table': [25, 7], 'feed-bin': [20, 6],
+  'nursery-tray': [27, 7], 'water-trough': [32, 7], 'hay-bale': [19, 7],
 };
 
 export function occupiedGround(objects, beds, fences) {
   const plots = beds.map(({x, y, w, h}) => ({x: x - w / 2, y: y - h / 2, w, h}));
   const solids = objects.filter(({type}) => footprints[type]).map(({type, x, y, scale}) => {
     const [width, depth] = footprints[type];
-    const pivot = type.startsWith('cottage') ? .7 : .5;
+    const pivot = type.startsWith('cottage') || type === 'jam-shed' ? .7 : .5;
     const w = width * scale, h = depth * scale;
     return {x: x - w * pivot, y: y - h - 1, w, h};
   });

@@ -6,7 +6,7 @@
 
 在[在线生成器](https://yeatsliao.github.io/github-farm/)输入任意公开仓库的 `OWNER/REPO`，也可以粘贴 GitHub 仓库链接。[试试 octocat/git-consortium](https://yeatsliao.github.io/github-farm/?repo=octocat%2Fgit-consortium)。
 
-拖动成长时间轴可以对比同一农场在不同档位的静态图。点击 **Show places** 会显示地点标记，可查看用途和解锁条件。[溪边果园四阶段对照](https://yeatsliao.github.io/github-farm/orchard-growth.png) · [岸线与围栏细节](https://yeatsliao.github.io/github-farm/orchard-details.png)
+拖动成长时间轴可以对比同一农场在不同档位的静态图。点击 **Show places** 会显示地点标记，可查看用途和解锁条件。[三种农场的 0、25、100 Stars 对照](https://yeatsliao.github.io/github-farm/farm-materials.png) · [溪边果园四阶段对照](https://yeatsliao.github.io/github-farm/orchard-growth.png)
 
 [![GitHub Farm 农场及 Star 统计](https://yeatsliao.github.io/github-farm/farm.png)](https://yeatsliao.github.io/github-farm/)
 

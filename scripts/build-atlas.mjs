@@ -5,7 +5,7 @@ import {SPRING_SHEETS} from './atlas-layout.js';
 const root=new URL('../',import.meta.url), source=new URL('assets/source/',root), out=new URL('assets/runtime/',root);
 await mkdir(out,{recursive:true});
 const atlas=createCanvas(1024,640),ctx=atlas.getContext('2d');ctx.imageSmoothingEnabled=false;
-const manifest={schemaVersion:1,artVersion:'star-spring-1',sprites:{}},sources=[];
+const manifest={schemaVersion:1,artVersion:'star-spring-2',sprites:{}},sources=[];
 let slot=0;
 
 function cleanEdges(image, width, height) {

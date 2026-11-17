@@ -11,6 +11,13 @@ import { seedOf } from '../src/farm/seed.js';
 const output = new URL('../dist/star-farm-theme-preview/', import.meta.url);
 const orchardViewport = {x: 35, y: 45, width: 560, height: 315};
 
+function sampleRepository(theme, index) {
+  if (theme.slug === 'creek-orchard') return {repositoryId: '18221276', fullName: 'octocat/git-consortium'};
+  let fixture = 0;
+  while (seedOf(`starter-1:demo-${fixture}`) % themes.length !== index) fixture++;
+  return {repositoryId: `demo-${fixture}`, fullName: `example/${theme.slug}`};
+}
+
 async function orchardCard(stars) {
   const scene = createStarterScene({
     repositoryId: '18221276', fullName: 'octocat/git-consortium', stars, newStars7d: null, source: 'preview',
@@ -20,7 +27,7 @@ async function orchardCard(stars) {
 
 export async function renderOrchardComparison() {
   const stages = [0, 25, 100, 300];
-  const captions = ['Starter yard', 'Harvest table', 'Jam shed', 'Dock and new trees'];
+  const captions = ['Ladder & empty crate', 'Sorting table & fruit crate', 'Jam shed', 'Dock and new trees'];
   const width = 448, height = 252, gap = 16, top = 58, label = 40;
   const comparison = createCanvas(2 * width + 3 * gap, top + 2 * (height + label + gap));
   const ctx = comparison.getContext('2d');
@@ -79,6 +86,36 @@ export async function renderOrchardDetails() {
   return board.toBuffer('image/png');
 }
 
+export async function renderMaterialComparison() {
+  const stages = [0, 25, 100];
+  const width = 416, height = 234, gap = 14, top = 58, label = 34;
+  const board = createCanvas(themes.length * (width + gap) + gap, top + stages.length * (height + label + gap));
+  const ctx = board.getContext('2d');
+  ctx.fillStyle = '#f2e6cb';
+  ctx.fillRect(0, 0, board.width, board.height);
+  ctx.fillStyle = '#503824';
+  ctx.font = 'bold 22px monospace';
+  ctx.fillText('FARM WORKSHOPS / THE FIRST 100 STARS', gap + 4, 35);
+  ctx.imageSmoothingEnabled = false;
+
+  for (const [column, theme] of themes.entries()) {
+    const repository = sampleRepository(theme, column);
+    const x = gap + column * (width + gap);
+    for (const [row, stars] of stages.entries()) {
+      const scene = createStarterScene({...repository, stars, newStars7d: null, source: 'preview'});
+      const img = await loadImage(await renderStarCard(scene));
+      const y = top + row * (height + label + gap);
+      ctx.drawImage(img, 0, 96, 1280, 720, x, y, width, height);
+      ctx.fillStyle = '#fff5df';
+      ctx.fillRect(x, y + height, width, label);
+      ctx.fillStyle = '#503824';
+      ctx.font = 'bold 14px monospace';
+      ctx.fillText(`${theme.title} / ${stars} STARS`, x + 9, y + height + 22);
+    }
+  }
+  return board.toBuffer('image/png');
+}
+
 async function renderPreviews() {
   await mkdir(output, {recursive: true});
 
@@ -103,9 +140,7 @@ async function renderPreviews() {
   growthCtx.imageSmoothingEnabled = false;
 
   for (const [i, theme] of themes.entries()) {
-    let fixture = 0;
-    while (seedOf(`starter-1:demo-${fixture}`) % themes.length !== i) fixture++;
-    const snapshot = {repositoryId: `demo-${fixture}`, fullName: `example/${theme.slug}`, stars: 0, newStars7d: null, fetchedAt: 'STARTER PREVIEW'};
+    const snapshot = {...sampleRepository(theme, i), stars: 0, newStars7d: null, fetchedAt: 'STARTER PREVIEW'};
     const left = gap + i * (tileWidth + gap);
     const card = await renderStarCard(createStarterScene(snapshot));
     await writeFile(new URL(`${theme.slug}.png`, output), card);
@@ -138,6 +173,7 @@ async function renderPreviews() {
   await writeFile(new URL('farm-growth-comparison.png', output), growthBoard.toBuffer('image/png'));
   console.log('Rendered three starter farms and expansion comparisons to dist/star-farm-theme-preview/');
   await writeFile(new URL('orchard-growth.png', output), await renderOrchardComparison());
+  await writeFile(new URL('farm-materials.png', output), await renderMaterialComparison());
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) await renderPreviews();
