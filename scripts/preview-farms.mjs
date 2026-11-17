@@ -87,7 +87,15 @@ export async function renderOrchardDetails() {
 }
 
 export async function renderMaterialComparison() {
-  const stages = [0, 25, 100];
+  return renderThemeComparison([0, 25, 100], 'FARM WORKSHOPS / THE FIRST 100 STARS');
+}
+
+export async function renderExpansionComparison() {
+  const viewport = {x: 41, y: 39, width: 544, height: 306};
+  return renderThemeComparison([100, 200, 300], 'FARM EXPANSIONS / 100 TO 300 STARS', viewport);
+}
+
+async function renderThemeComparison(stages, title, viewport) {
   const width = 416, height = 234, gap = 14, top = 58, label = 34;
   const board = createCanvas(themes.length * (width + gap) + gap, top + stages.length * (height + label + gap));
   const ctx = board.getContext('2d');
@@ -95,7 +103,7 @@ export async function renderMaterialComparison() {
   ctx.fillRect(0, 0, board.width, board.height);
   ctx.fillStyle = '#503824';
   ctx.font = 'bold 22px monospace';
-  ctx.fillText('FARM WORKSHOPS / THE FIRST 100 STARS', gap + 4, 35);
+  ctx.fillText(title, gap + 4, 35);
   ctx.imageSmoothingEnabled = false;
 
   for (const [column, theme] of themes.entries()) {
@@ -103,7 +111,7 @@ export async function renderMaterialComparison() {
     const x = gap + column * (width + gap);
     for (const [row, stars] of stages.entries()) {
       const scene = createStarterScene({...repository, stars, newStars7d: null, source: 'preview'});
-      const img = await loadImage(await renderStarCard(scene));
+      const img = await loadImage(await renderStarCard(scene, {viewport}));
       const y = top + row * (height + label + gap);
       ctx.drawImage(img, 0, 96, 1280, 720, x, y, width, height);
       ctx.fillStyle = '#fff5df';
@@ -174,6 +182,7 @@ async function renderPreviews() {
   console.log('Rendered three starter farms and expansion comparisons to dist/star-farm-theme-preview/');
   await writeFile(new URL('orchard-growth.png', output), await renderOrchardComparison());
   await writeFile(new URL('farm-materials.png', output), await renderMaterialComparison());
+  await writeFile(new URL('farm-expansions.png', output), await renderExpansionComparison());
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) await renderPreviews();

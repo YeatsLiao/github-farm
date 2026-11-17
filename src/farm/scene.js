@@ -18,8 +18,8 @@ const additions = {
     [['harvest-table', 219, 216], ['basket', 208, 224]],
     [['barrel', 305, 195, .73]],
     [['tool-shed', 110, 184, .94, 'tool-shed'], ['drying-rack', 178, 204], ['scarecrow', 211, 267, .82]],
-    [['barrel', 502, 252, .83], ['crate', 502, 267, .83]],
-    [['carrot', 488, 292, .88], ['tomato', 508, 291, .88], ['pumpkin', 528, 292, .84]],
+    [['shipping-counter', 483, 252, 1, 'shipping-counter'], ['produce-handcart', 519, 257]],
+    [['carrot', 488, 292, .88], ['tomato', 508, 291, .88], ['pumpkin', 528, 292, .84], ['packed-produce', 505, 267]],
   ],
   'creek-orchard': [
     [['basket', 247, 210, .7]],
@@ -28,8 +28,8 @@ const additions = {
     [['harvest-table', 253, 216], ['fruit-crate-full', 271, 222]],
     [['crate', 268, 244, .72]],
     [['jam-shed', 312, 171, .95, 'jam-shed']],
-    [['bench', 537, 249, .86], ['crate', 559, 253, .83]],
-    [['apple', 515, 197, .87], ['orange', 545, 172, .84], ['dock-post', 135, 218], ['dock-post', 136, 229]],
+    [['fruit-handoff', 185, 250, 1, 'fruit-handoff'], ['basket-sled', 223, 249], ['bench', 537, 249, .86], ['crate', 559, 253, .83]],
+    [['apple', 515, 197, .87], ['orange', 545, 172, .84], ['dock-post', 135, 218], ['dock-post', 136, 229], ['mooring-cleat', 144, 224]],
   ],
   'barnyard-pasture': [
     [['chicken', 378, 248, .74]],
@@ -38,8 +38,8 @@ const additions = {
     [['harvest-table', 246, 201], ['hay-bale', 334, 251], ['egg-basket', 371, 193]],
     [['chicken', 394, 194, .84]],
     [['hay-shed', 267, 183, .94, 'hay-shed'], ['feed-bin', 284, 193], ['crate', 304, 193, .68]],
-    [['coop', 529, 180, .87], ['barrel', 549, 194, .74]],
-    [['chicken', 527, 224, .86], ['verge', 503, 252]],
+    [['coop', 529, 180, .87], ['egg-sorting-stand', 487, 197, 1, 'egg-sorting-stand'], ['nest-boxes', 550, 201]],
+    [['chicken', 527, 224, .86], ['verge', 503, 252], ['open-yard-gate', 488, 229]],
   ],
 };
 
@@ -47,25 +47,28 @@ const yardPaths = {
   'cottage-garden': [
     {at: 100, route: {id: 'drying-yard', points: [[180, 212], [196, 210], [232, 204]]}},
     {at: 100, route: {id: 'tool-shed-yard', points: [[111, 190], [120, 213], [139, 221], [173, 219], [184, 212]]}},
+    {at: 200, route: {id: 'shipping-yard', points: [[474, 267], [460, 265], [446, 258]]}},
   ],
   'creek-orchard': [
     {at: 0, route: {id: 'picking-path', points: [[156, 174], [157, 202], [156, 223]]}},
     {at: 25, route: {id: 'harvest-path', points: [[253, 226], [232, 238]]}},
     {at: 100, route: {id: 'jam-yard', points: [[312, 178], [310, 195], [301, 211], [284, 226]]}, surface: {x: 276, y: 172, width: 54, height: 13, material: 'stone'}},
+    {at: 200, route: {id: 'fruit-handoff-yard', points: [[179, 244], [175, 237], [175, 231]]}},
     {at: 300, surface: {x: 130, y: 216, width: 37, height: 14, material: 'dock'}},
     {at: 300, route: {id: 'new-orchard', points: [[531, 184], [537, 207], [528, 229]]}},
   ],
   'barnyard-pasture': [
     {at: 100, route: {id: 'feed-yard', points: [[284, 205], [287, 215], [292, 223]]}, surface: {x: 273, y: 191, width: 41, height: 15, material: 'wood'}},
     {at: 100, route: {id: 'hay-shed-yard', points: [[266, 190], [268, 203], [284, 205]]}},
+    {at: 200, route: {id: 'egg-sorting-yard', points: [[487, 204], [487, 210]]}},
   ],
 };
 
 const expansion = {
   'cottage-garden': {
-    points: [[480, 291], [468, 264], [409, 242], [362, 212]],
+    points: [[471, 291], [469, 281], [446, 258], [409, 242], [362, 212]],
     bed: {id: 'bed-2', x: 511, y: 291, w: 67, h: 26},
-    surface: {x: 455, y: 253, width: 39, height: 19, material: 'stone'},
+    surface: {x: 461, y: 246, width: 43, height: 23, material: 'stone'},
   },
   'creek-orchard': {
     points: [[528, 229], [484, 232], [451, 224], [418, 208], [372, 198]],
@@ -80,7 +83,7 @@ const expansion = {
 function propsAt(entries, prefix) {
   return entries.map(([type, x, y, scale = 1, id], index) => ({
     id: id ?? (prefix === 'starter' && type === 'coop' ? 'livestock' : type === 'well' ? 'well' : `${prefix}-${index}`),
-    type, x, y, scale, ground: type !== 'waterlily' && type !== 'duck',
+    type, x, y, scale, ground: !['waterlily', 'duck', 'mooring-cleat'].includes(type),
   }));
 }
 

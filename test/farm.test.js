@@ -74,10 +74,11 @@ test('the orchard connects its fruit trees, table, shed and dock at their milest
 
 test('paths stay connected, fences leave access, and yard props respect water and crop beds', () => {
  const waterOnly = new Set(['duck', 'waterlily']);
- const shoreAllowed = new Set(['dock-post', 'rock', 'reeds']);
+ const shoreAllowed = new Set(['dock-post', 'mooring-cleat', 'rock', 'reeds']);
  const furniture = new Set([
   'bench', 'crate', 'barrel', 'harvest-table', 'feed-bin', 'drying-rack',
   'nursery-tray', 'water-trough', 'hay-bale', 'fruit-crate-empty', 'fruit-crate-full',
+  'shipping-counter', 'produce-handcart', 'packed-produce', 'fruit-handoff', 'basket-sled', 'egg-sorting-stand', 'nest-boxes',
  ]);
  for (let i = 0; i < 12; i++) {
   for (const stars of [0, 25, 100, 200, 300, 400, 1200, 2000, 2900, 5000]) {
@@ -112,6 +113,40 @@ test('paths stay connected, fences leave access, and yard props respect water an
    }
   }
  }
+});
+
+test('each expansion opens its work area at 200 and completes the next setup at 300 Stars', () => {
+ const expansions = {
+  'cottage-garden': ['shipping-counter', 'shipping-yard', 'packed-produce'],
+  'creek-orchard': ['fruit-handoff', 'fruit-handoff-yard', 'mooring-cleat'],
+  'barnyard-pasture': ['egg-sorting-stand', 'egg-sorting-yard', 'open-yard-gate'],
+ };
+ const checked = new Set();
+ for (let i = 0; i < 24 && checked.size < 3; i++) {
+  const sceneAt = stars => createStarterScene(snapshot(`demo-${i}`, stars));
+  const before = sceneAt(199);
+  if (checked.has(before.theme)) continue;
+  checked.add(before.theme);
+  const [work, route, last] = expansions[before.theme];
+  const opened = sceneAt(200), complete = sceneAt(300);
+  assert.ok(!before.objects.some(object => object.type === work));
+  assert.ok(opened.objects.some(object => object.type === work));
+  assert.ok(opened.blueprint.routes.some(path => path.id === route));
+  assert.equal(opened.places.find(place => place.id === 'expansion').at, 200);
+  assert.ok(!opened.objects.some(object => object.type === last));
+  const piece = complete.objects.find(object => object.type === last);
+  assert.ok(piece);
+  if (last === 'mooring-cleat') {
+   const dock = complete.yardSurfaces.find(surface => surface.material === 'dock');
+   assert.ok(piece.x > dock.x && piece.x < dock.x + dock.width);
+   assert.ok(piece.y > dock.y && piece.y < dock.y + dock.height);
+  }
+  if (last === 'open-yard-gate') {
+   assert.ok(routeDistance(complete.blueprint.routes, piece.x, piece.y) > 8);
+   assert.ok(complete.fences.some(run => run[0][0] === piece.x && Math.abs(run[0][1] - piece.y) < 5));
+  }
+ }
+ assert.equal(checked.size, 3);
 });
 
 test('each farm has its own starter props and a workshop unlocked at 100 Stars', () => {
