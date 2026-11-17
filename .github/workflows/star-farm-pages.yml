@@ -39,6 +39,7 @@ jobs:
         run: npm run build
         env:
           STAR_FARM_REPOSITORY: ${{ vars.STAR_FARM_REPOSITORY }}
+          STAR_FARM_PNG_BASE: ${{ vars.STAR_FARM_PNG_BASE }}
           STAR_FARM_GITHUB_TOKEN: ${{ github.token }}
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4

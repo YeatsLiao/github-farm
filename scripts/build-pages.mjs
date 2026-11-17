@@ -30,15 +30,21 @@ async function copyBrowserFiles() {
 }
 
 try {
-  const { values } = parseArgs({ options: { repo: { type: 'string' } } });
+  const { values } = parseArgs({ options: { repo: { type: 'string' }, 'png-base': { type: 'string' } } });
   const repository = values.repo ?? (process.env.STAR_FARM_REPOSITORY || process.env.GITHUB_REPOSITORY);
   if (!repository) throw new Error('Pass --repo OWNER/REPO or set GITHUB_REPOSITORY');
+  const configuredBase = values['png-base'] ?? process.env.STAR_FARM_PNG_BASE;
+  const pngBase = configuredBase ? new URL(configuredBase) : null;
+  if (pngBase && (!['https:', 'http:'].includes(pngBase.protocol) || pngBase.username || pngBase.password || pngBase.search || pngBase.hash)) {
+    throw new Error('STAR_FARM_PNG_BASE must be a public HTTP(S) base URL without credentials, query parameters, or fragments');
+  }
 
   const snapshot = await fetchRepositoryStars(repository);
   const png = await renderStarCard(createStarterScene(snapshot));
   await mkdir(output, { recursive: true });
   await writeFile(new URL('farm.png', output), png);
   await writeFile(new URL('snapshot.json', output), JSON.stringify(snapshot));
+  await writeFile(new URL('app-config.json', output), JSON.stringify({pngBase: pngBase?.href ?? null}));
   await writeFile(new URL('favicon.png', output), await renderFarmIcon());
   await writeFile(new URL('orchard-growth.png', output), await renderOrchardComparison());
   await writeFile(new URL('orchard-details.png', output), await renderOrchardDetails());

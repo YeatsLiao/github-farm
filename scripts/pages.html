@@ -44,6 +44,11 @@
     .details p { font-size: .875rem; margin: .2rem 0 0; }
     .details .place-copy { flex: 1 1 17rem; }
     .details .detail-links { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem; }
+    #readme-embed { margin: .65rem 0; padding: .65rem .8rem; background: #f7efd9; border-radius: .4rem; }
+    #readme-embed summary { cursor: pointer; font-weight: 650; }
+    #readme-embed label { margin-top: .5rem; }
+    #copy-status { margin: .375rem 0 0; font-size: .875rem; }
+    #copy-status:empty { display: none; }
     a { color: #5b3e2c; }
     :focus-visible { outline: 2px solid #415f37; outline-offset: 3px; }
   </style>
@@ -99,6 +104,15 @@
         <a href="./orchard-details.png">Shore &amp; fence details</a>
       </div>
     </section>
+    <details id="readme-embed" hidden>
+      <summary>Embed in your README</summary>
+      <label for="embed-markdown">Markdown</label>
+      <div class="fields">
+        <input id="embed-markdown" readonly spellcheck="false">
+        <button id="copy-embed" type="button" class="quiet-button">Copy Markdown</button>
+      </div>
+      <p id="copy-status" role="status"></p>
+    </details>
     <p id="static-download"><a href="./farm.png" download>Download PNG</a></p>
   </main>
 </body>

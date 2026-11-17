@@ -12,7 +12,7 @@ Move through the growth timeline to compare still images of the same farm. Selec
 
 ## Add a farm to your README
 
-The generator gives you a shareable link and a downloadable PNG of the current farm. This line embeds the farm shown above. For a PNG that updates automatically for your repository, follow the [Pages setup guide](docs/DEPLOYMENT.md).
+The generator gives you a shareable link and a downloadable PNG of the current farm. This line embeds the farm shown above. The [deployment guide](docs/DEPLOYMENT.md) describes scheduled Pages builds and how to connect an image service for automatic README embeds.
 
 ```markdown
 [![GitHub Farm](https://yeatsliao.github.io/github-farm/farm.png)](https://yeatsliao.github.io/github-farm/)

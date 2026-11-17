@@ -21,6 +21,10 @@ const togglePlaces = document.querySelector('#toggle-places');
 const details = document.querySelector('#place-info');
 const placeName = document.querySelector('#place-name');
 const placeDescription = document.querySelector('#place-description');
+const embed = document.querySelector('#readme-embed');
+const markdown = document.querySelector('#embed-markdown');
+const copyEmbed = document.querySelector('#copy-embed');
+const copyStatus = document.querySelector('#copy-status');
 const format = new Intl.NumberFormat('en-US');
 let artwork;
 let currentCard;
@@ -28,6 +32,7 @@ let farm;
 let view;
 let focusedPlace;
 let viewRequest;
+let configuration;
 
 function repositoryName(inputValue) {
   const value = inputValue.trim();
@@ -135,6 +140,25 @@ async function scheduledSnapshot() {
   return response.json();
 }
 
+async function showEmbed(snapshot) {
+  embed.hidden = true;
+  copyStatus.textContent = '';
+  try {
+    configuration ??= fetch('./app-config.json').then(async response => response.ok ? response.json() : null);
+    const config = await configuration;
+    if (farm?.snapshot !== snapshot || !config?.pngBase) return;
+    const {owner, repo} = parseRepository(snapshot.fullName);
+    const base = config.pngBase.replace(/\/$/, '');
+    const png = `${base}/v1/farm/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}.png`;
+    const share = new URL('.', location.href);
+    share.searchParams.set('repo', snapshot.fullName);
+    markdown.value = `[![GitHub Farm](<${png}>)](<${share.href}>)`;
+    embed.hidden = false;
+  } catch {
+    configuration = undefined;
+  }
+}
+
 function browserStorage() {
   try {
     return localStorage;
@@ -148,7 +172,7 @@ function clearFarm() {
   farm = undefined;
   if (currentCard) URL.revokeObjectURL(currentCard);
   currentCard = undefined;
-  for (const element of [controls, details, canvas, image, document.querySelector('#static-download')]) element.hidden = true;
+  for (const element of [controls, details, canvas, image, embed, document.querySelector('#static-download')]) element.hidden = true;
 }
 
 async function showFarm(value) {
@@ -183,6 +207,7 @@ async function showFarm(value) {
     for (const element of [controls, details, canvas]) element.hidden = false;
     image.hidden = true;
     document.querySelector('#static-download').hidden = true;
+    void showEmbed(snapshot);
     const total = `${snapshot.fullName} · ${format.format(snapshot.stars)} ${snapshot.stars === 1 ? 'star' : 'stars'}`;
     generate.textContent = snapshot.stale ? 'Retry lookup' : 'Generate farm';
     setStatus(snapshot.stale
@@ -212,6 +237,18 @@ form.addEventListener('submit', event => {
   showFarm(input.value);
 });
 input.addEventListener('input', () => { generate.textContent = 'Generate farm'; });
+copyEmbed.addEventListener('click', async () => {
+  const value = markdown.value;
+  try {
+    await navigator.clipboard.writeText(value);
+    if (markdown.value === value) copyStatus.textContent = 'Markdown copied.';
+  } catch {
+    if (markdown.value !== value) return;
+    markdown.focus();
+    markdown.select();
+    copyStatus.textContent = 'Press Ctrl+C or Command+C to copy the selected Markdown.';
+  }
+});
 example.addEventListener('click', () => {
   input.value = example.textContent;
   showFarm(input.value);
