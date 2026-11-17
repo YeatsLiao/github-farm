@@ -1,6 +1,6 @@
 # Contributing to GitHub Farm
 
-Use the [issue templates](https://github.com/YeatsLiao/github-farm/issues/new/choose) for bugs, ideas, and art contributions. For visual changes, include before and after images at the same repository and star count.
+Use the [issue templates](https://github.com/YeatsLiao/github-farm/issues/new/choose) for bugs, ideas, and art contributions. For visual changes, include before and after images for the same repository, star count, and viewport. Check that the result still reads at README size.
 
 ## Code
 

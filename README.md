@@ -12,7 +12,10 @@ Move through the growth timeline to compare still images of the same farm. Selec
 
 ## Add a farm to your README
 
-The generator gives you a shareable link and a downloadable PNG of the current farm. This line embeds the farm shown above. The [deployment guide](docs/DEPLOYMENT.md) describes scheduled Pages builds and how to connect an image service for automatic README embeds.
+- **Share a farm.** Copy the generated page URL, or download the PNG and add it to your repository.
+- **Keep the image up to date.** Set up GitHub Actions and Pages for the public repository you want to feature. The workflow rebuilds its PNG daily. [Pages setup guide](docs/DEPLOYMENT.md#发布可自动更新的-readme-图片)
+
+The Markdown below embeds this project's published farm.
 
 ```markdown
 [![GitHub Farm](https://yeatsliao.github.io/github-farm/farm.png)](https://yeatsliao.github.io/github-farm/)
@@ -29,4 +32,4 @@ python -m http.server 8080 --bind 127.0.0.1 --directory dist/pages
 
 Open [localhost:8080](http://localhost:8080) to try the generator.
 
-[Project structure](docs/ARCHITECTURE.md) · [Asset guide](docs/ASSETS.md) · [Contributing](docs/CONTRIBUTING.md) · [MIT License](LICENSE)
+[Project structure](docs/ARCHITECTURE.md) · [Delivery and roadmap](docs/UPGRADE-PLAN.md) · [Asset guide](docs/ASSETS.md) · [Contributing](docs/CONTRIBUTING.md) · [MIT License](LICENSE)
