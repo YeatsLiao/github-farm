@@ -36,6 +36,7 @@ const footprints = {
   'nursery-tray': [27, 7], 'water-trough': [32, 7], 'hay-bale': [19, 7],
   'shipping-counter': [38, 8], 'produce-handcart': [27, 9], 'fruit-handoff': [32, 7],
   'egg-sorting-stand': [32, 8], 'nest-boxes': [22, 8],
+  'wash-bench': [32, 8], 'dispatch-rack': [36, 9], 'fruit-press': [25, 8],
 };
 
 export function occupiedGround(objects, beds, fences) {

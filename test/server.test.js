@@ -1,7 +1,7 @@
 import { once } from 'node:events';
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { fetchRepositoryStars, recentStarCount, RepositoryLookupError } from '../src/repository-stars.js';
+import { fetchRepositoryStars, fetchRepositoryStarsWithCache, recentStarCount, RepositoryLookupError } from '../src/repository-stars.js';
 import { createStarFarmServer } from '../src/server.js';
 
 test('history combines the two weeks without including the current partial day', () => {
@@ -31,6 +31,34 @@ test('repository data uses a stable numeric ID and tolerates unavailable history
   await assert.rejects(fetchRepositoryStars('owner/private', {
     fetchImpl: async () => Response.json({...repository, private: true, visibility: 'private'}), token: '',
   }), {status: 404});
+});
+
+test('browser only reuses recent saved stats for the same public repository on rate limit', async () => {
+  const snapshot = {repositoryId: '123', fullName: 'Owner/Repo', stars: 8, newStars7d: null, source: 'github', fetchedAt: '2026-11-16T12:00:00Z'};
+  const store = new Map();
+  const storage = {getItem: key => store.get(key), setItem: (key, data) => store.set(key, data)};
+  let now = Date.parse(snapshot.fetchedAt) + 1000;
+  let failure;
+  const options = {storage, now: () => now, lookup: async () => {
+    if (failure) throw new RepositoryLookupError('lookup failed', failure);
+    return snapshot;
+  }};
+
+  failure = 429;
+  await assert.rejects(fetchRepositoryStarsWithCache('owner/repo', options), {status: 429});
+  failure = undefined;
+  assert.equal(await fetchRepositoryStarsWithCache('Owner/Repo', options), snapshot);
+  failure = 429;
+  assert.deepEqual(await fetchRepositoryStarsWithCache('owner/repo', options), {...snapshot, stale: true});
+  await assert.rejects(fetchRepositoryStarsWithCache('owner/another', options), {status: 429});
+  now += 24 * 3600 * 1000;
+  await assert.rejects(fetchRepositoryStarsWithCache('owner/repo', options), {status: 429});
+
+  now = Date.parse(snapshot.fetchedAt) + 1000;
+  failure = 404;
+  await assert.rejects(fetchRepositoryStarsWithCache('owner/repo', options), {status: 404});
+  failure = 429;
+  await assert.rejects(fetchRepositoryStarsWithCache('owner/repo', options), {status: 429});
 });
 
 test('PNG endpoint shares in-flight work, supports ETags, expires stale cards and clears deleted repos', async t => {

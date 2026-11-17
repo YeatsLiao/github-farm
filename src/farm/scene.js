@@ -1,4 +1,4 @@
-import { starterThemes, starterViewport } from './layouts.js';
+import { starterThemes, starterViewport, workyardViewport } from './layouts.js';
 import { farmExpansions } from './expansions.js';
 import { randomFor, seedOf } from './seed.js';
 import { describeYard } from './yard.js';
@@ -134,9 +134,17 @@ function extendFarm(layout, theme, stars, objects, beds, routes, surfaces) {
   const [workX, workY] = layout.workshop;
   const [millX, millY] = layout.mill;
   const [treeX, treeY, fruit] = layout.orchard;
+  const {workyard, milestones} = layout;
   beds.push({id: 'bed-terrace', x: fieldX, y: fieldY, w: width, h: height});
   routes.push({id: 'bed-terrace', points: layout.fieldRoad});
   add('field-tools', 'crate', fieldX - width / 2 - 10, fieldY + 6, .74);
+  for (const [at, type, x, y, scale] of milestones) {
+    if (stars >= at) add(`workyard-${at}`, type, x, y, scale);
+  }
+  if (stars >= workyard.at) {
+    routes.push({id: 'workyard', points: workyard.route});
+    surfaces.push(workyard.surface);
+  }
   for (const [index, crop] of layout.crops.entries()) {
     const sowAt = 400 + index * 100;
     const harvestAt = sowAt + 400;
@@ -225,9 +233,10 @@ export function createStarterScene(snapshot) {
   return {
     theme: theme.slug,
     snapshot,
-    viewport: extended ? {x: 0, y: 0, width: 640, height: 360} : opened ? {x: 41, y: 39, width: 544, height: 306} : starterViewport,
+    viewport: stageStars >= 2000 ? {x: 0, y: 0, width: 640, height: 360}
+      : extended ? workyardViewport : opened ? {x: 41, y: 39, width: 544, height: 306} : starterViewport,
     blueprint,
-    ...describeYard(theme.slug, objects, beds, blueprint),
+    ...describeYard(theme.slug, objects, beds, blueprint, farmExpansions[theme.slug].workyard),
     objects, beds, fences, yardSurfaces, livestock: Boolean(theme.livestock),
     stage: {
       number: phase + 1, total: farmMilestones.length,

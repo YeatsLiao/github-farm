@@ -79,9 +79,10 @@ test('paths stay connected, fences leave access, and yard props respect water an
   'bench', 'crate', 'barrel', 'harvest-table', 'feed-bin', 'drying-rack',
   'nursery-tray', 'water-trough', 'hay-bale', 'fruit-crate-empty', 'fruit-crate-full',
   'shipping-counter', 'produce-handcart', 'packed-produce', 'fruit-handoff', 'basket-sled', 'egg-sorting-stand', 'nest-boxes',
+  'wash-bench', 'dispatch-rack', 'fruit-press', 'jam-crate', 'feed-sacks', 'egg-trays',
  ]);
  for (let i = 0; i < 12; i++) {
-  for (const stars of [0, 25, 100, 200, 300, 400, 1200, 2000, 2900, 5000]) {
+  for (const stars of [0, 5, 25, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 2000, 2900, 5000]) {
    const scene = createStarterScene(snapshot(`demo-${i}`, stars));
    const {pond, seed, routes, reserved} = scene.blueprint;
    assert.ok(reserved.length > scene.beds.length, 'paths know about occupied ground');
@@ -187,6 +188,11 @@ test('each approved terrain grows through the full schedule and unlocks a windmi
    assert.notDeepEqual(current.objects, previous.objects, `${current.theme} at ${stars}`);
    const anchors = new Map(current.objects.map(object => [object.id, [object.x, object.y]]));
    for (const object of previous.objects) assert.deepEqual(anchors.get(object.id), [object.x, object.y]);
+   if (stars >= 400 && stars <= 1000) {
+    assert.ok(anchors.has(`workyard-${stars}`), 'Every workshop stage adds a visible prop');
+    const place = current.places.find(({id}) => id === 'workyard');
+    assert.equal(current.blueprint.routes.some(route => route.id === 'workyard'), stars >= place.at);
+   }
    assert.equal(anchors.has('windmill'), stars === 5000);
    previous = current;
   }
