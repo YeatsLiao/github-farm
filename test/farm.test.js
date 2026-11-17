@@ -75,7 +75,10 @@ test('the orchard connects its fruit trees, table, shed and dock at their milest
 test('paths stay connected, fences leave access, and yard props respect water and crop beds', () => {
  const waterOnly = new Set(['duck', 'waterlily']);
  const shoreAllowed = new Set(['dock-post', 'rock', 'reeds']);
- const furniture = new Set(['bench', 'crate', 'barrel', 'harvest-table', 'feed-bin', 'drying-rack']);
+ const furniture = new Set([
+  'bench', 'crate', 'barrel', 'harvest-table', 'feed-bin', 'drying-rack',
+  'nursery-tray', 'water-trough', 'hay-bale', 'fruit-crate-empty', 'fruit-crate-full',
+ ]);
  for (let i = 0; i < 12; i++) {
   for (const stars of [0, 25, 100, 200, 300, 400, 1200, 2000, 2900, 5000]) {
    const scene = createStarterScene(snapshot(`demo-${i}`, stars));
@@ -109,6 +112,31 @@ test('paths stay connected, fences leave access, and yard props respect water an
    }
   }
  }
+});
+
+test('each farm has its own starter props and a workshop unlocked at 100 Stars', () => {
+ const packs = {
+  'cottage-garden': [['nursery-tray', 'watering-can'], ['trellis-tomato'], 'tool-shed', 'tool-shed-yard'],
+  'creek-orchard': [['fruit-ladder', 'fruit-crate-empty'], ['fruit-crate-full'], 'jam-shed', 'jam-yard'],
+  'barnyard-pasture': [['water-trough'], ['hay-bale', 'egg-basket'], 'hay-shed', 'hay-shed-yard'],
+ };
+ const assigned = new Set();
+ for (let i = 0; i < 24 && assigned.size < 3; i++) {
+  const sceneAt = stars => createStarterScene(snapshot(`demo-${i}`, stars));
+  const start = sceneAt(0);
+  if (assigned.has(start.theme)) continue;
+  assigned.add(start.theme);
+  const [starterTypes, sortingTypes, shed, route] = packs[start.theme];
+  const has = (scene, type) => scene.objects.some(object => object.type === type);
+  for (const type of starterTypes) assert.ok(has(start, type), type);
+  const sorted = sceneAt(25);
+  for (const type of sortingTypes) assert.ok(has(sorted, type), type);
+  assert.ok(!has(sceneAt(99), shed));
+  const workshop = sceneAt(100);
+  assert.ok(has(workshop, shed));
+  assert.ok(workshop.blueprint.routes.some(path => path.id === route));
+ }
+ assert.equal(assigned.size, 3);
 });
 
 test('each approved terrain grows through the full schedule and unlocks a windmill at 5000', () => {

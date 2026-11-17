@@ -19,5 +19,12 @@
     "sha256": "077f8cb97dd29e95d92d518906752c3c839b3d775d701f93987895475fc49272",
     "width": 1254,
     "height": 1254
+  },
+  {
+    "id": "workshops",
+    "file": "spring-workshops.png",
+    "sha256": "4e29ef00b20f6fb2fc96a91772b935ce856255d11f5b30d4178f96f028bfc39c",
+    "width": 576,
+    "height": 192
   }
 ]

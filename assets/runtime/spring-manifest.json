@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "artVersion": "star-spring-1",
+  "artVersion": "star-spring-2",
   "sprites": {
     "cottage-1": {
       "rect": [
@@ -986,6 +986,93 @@
         964,
         232,
         261
+      ]
+    },
+    "jam-shed": {
+      "rect": [
+        259,
+        515,
+        64,
+        47
+      ],
+      "pivot": [
+        44,
+        47
+      ],
+      "visualBounds": [
+        -44,
+        -47,
+        64,
+        47
+      ],
+      "footprint": [
+        40,
+        16
+      ],
+      "sourceId": "workshops",
+      "sourceRect": [
+        8,
+        31,
+        175,
+        129
+      ]
+    },
+    "tool-shed": {
+      "rect": [
+        387,
+        515,
+        32,
+        54
+      ],
+      "pivot": [
+        17,
+        54
+      ],
+      "visualBounds": [
+        -17,
+        -54,
+        32,
+        54
+      ],
+      "footprint": [
+        32,
+        16
+      ],
+      "sourceId": "workshops",
+      "sourceRect": [
+        236,
+        8,
+        103,
+        176
+      ]
+    },
+    "hay-shed": {
+      "rect": [
+        515,
+        515,
+        63,
+        46
+      ],
+      "pivot": [
+        33,
+        46
+      ],
+      "visualBounds": [
+        -33,
+        -46,
+        63,
+        46
+      ],
+      "footprint": [
+        40,
+        16
+      ],
+      "sourceId": "workshops",
+      "sourceRect": [
+        392,
+        31,
+        176,
+        129
       ]
     }
   }

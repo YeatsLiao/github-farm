@@ -24,4 +24,12 @@
 - [岸线、收获台与围栏放大图](https://yeatsliao.github.io/github-farm/orchard-details.png)
 - [线上静态果园](https://yeatsliao.github.io/github-farm/?repo=octocat%2Fgit-consortium)
 
+## 三种农场的作业素材
+
+- **庭院菜园**开局有育苗盘和浇水壶，25 Stars 架起番茄竹架，100 Stars 在田埂的小路旁开工具棚。
+- **溪边果园**开局有采果梯和空果筐，25 Stars 在分拣台旁添上满果筐，100 Stars 接入绿顶果酱棚。
+- **谷仓牧场**开局有饮水槽，25 Stars 添草捆和鸡舍旁的蛋篮，100 Stars 接入储草棚。
+
+[三种农场的 0、25、100 Stars 对照](https://yeatsliao.github.io/github-farm/farm-materials.png)
+
 项目继续使用现有目录。素材原稿放在 `assets/source/`，运行时图集放在 `assets/runtime/`，局部预览图放在 `dist/`。网页和 Actions 复用同一套卡片绘制。

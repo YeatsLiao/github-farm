@@ -11,5 +11,7 @@ export const SPRING_SHEETS = [
  ['tomato',18,26],['carrot',16,20],['wheat',18,26],['pumpkin',22,20],
  ['sprout',12,8],['farmer',24,32],['chicken',16,17],['cat',16,20],
  ['duck',18,18],['well',32,40],['bench',34,22],['barrel',18,22],
- ['lamp',14,25],['fence',34,22],['crate',24,20],['scarecrow',24,36]]}
+ ['lamp',14,25],['fence',34,22],['crate',24,20],['scarecrow',24,36]]},
+ {id:'workshops',file:'spring-workshops.png',cols:3,rows:1,items:[
+ ['jam-shed',64,49,.69],['tool-shed',42,54,.54],['hay-shed',66,46,.52]]}
 ];
