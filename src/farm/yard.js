@@ -22,7 +22,7 @@ const yards = {
   },
 };
 
-export function describeYard(theme, objects, beds, blueprint) {
+export function describeYard(theme, objects, beds, blueprint, workyard) {
   const yard = yards[theme];
   const [hx, hy] = blueprint.home;
   const [px, py] = blueprint.pond;
@@ -37,6 +37,7 @@ export function describeYard(theme, objects, beds, blueprint) {
     {id: 'harvest', label: 'Harvest table', x: harvestX, y: harvestY - 6, at: 25, description: 'The farmer uses the table to sort baskets collected around the yard.'},
     {id: 'work', label: workName, x: wx, y: wy - 14, at: workAt, description: workDescription},
     {id: 'expansion', label: expansionName, x: expansionX, y: expansionY, at: 200, description: expansionDescription},
+    {id: 'workyard', label: workyard.label, x: workyard.x, y: workyard.y, at: workyard.at, description: workyard.description},
   ];
   if (theme === 'creek-orchard') {
     places.push(

@@ -6,7 +6,7 @@ A GitHub repository’s stars grow a pixel-art farm. Each repository gets a stab
 
 [Open the generator](https://yeatsliao.github.io/github-farm/) and enter any public repository as `OWNER/REPO` or paste its GitHub URL. [Try octocat/git-consortium](https://yeatsliao.github.io/github-farm/?repo=octocat%2Fgit-consortium).
 
-Move through the growth timeline to compare still images of the same farm. Select **Show places** to inspect the map. [Starter farms at 0, 25 and 100 stars](https://yeatsliao.github.io/github-farm/farm-materials.png) · [Expansions at 100, 200 and 300 stars](https://yeatsliao.github.io/github-farm/farm-expansions.png).
+Move through the growth timeline to compare still images of the same farm. Select **Show places** to inspect the map. [Starter farms](https://yeatsliao.github.io/github-farm/farm-materials.png) · [100–300 Stars](https://yeatsliao.github.io/github-farm/farm-expansions.png) · [300–1,000 Stars](https://yeatsliao.github.io/github-farm/farm-workyards.png)
 
 [![GitHub Farm and its star statistics](https://yeatsliao.github.io/github-farm/farm.png)](https://yeatsliao.github.io/github-farm/)
 

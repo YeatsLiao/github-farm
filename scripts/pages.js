@@ -1,5 +1,5 @@
 import { createStarterScene, farmMilestones } from './src/farm/scene.js';
-import { fetchRepositoryStars, parseRepository, RepositoryLookupError } from './src/repository-stars.js';
+import { fetchRepositoryStarsWithCache, parseRepository, RepositoryLookupError } from './src/repository-stars.js';
 import { drawStarCard } from './src/render/draw-card.js';
 
 const form = document.querySelector('#farm-form');
@@ -120,7 +120,7 @@ function showGrowth(stars, currentScene, currentFrame) {
   context.drawImage(card, 0, 0);
   const amount = `${format.format(stars)} ${stars === 1 ? 'Star' : 'Stars'}`;
   const extra = !current && stars > farm.snapshot.stars ? ` · ${format.format(stars - farm.snapshot.stars)} to go` : '';
-  caption.textContent = `${current ? 'Current farm' : 'Growth preview'} · ${amount}${extra}`;
+  caption.textContent = `${current ? (farm.snapshot.stale ? 'Saved farm' : 'Current farm') : 'Growth preview'} · ${amount}${extra}`;
   growth.value = farm.stages.indexOf(stars);
   growth.setAttribute('aria-valuetext', caption.textContent);
   canvas.setAttribute('aria-label', `${scene.name} for ${scene.snapshot.fullName}, ${amount}, stage ${scene.stage.number} of ${scene.stage.total}`);
@@ -135,6 +135,22 @@ async function scheduledSnapshot() {
   return response.json();
 }
 
+function browserStorage() {
+  try {
+    return localStorage;
+  } catch {
+    return undefined;
+  }
+}
+
+function clearFarm() {
+  cancelAnimationFrame(viewRequest);
+  farm = undefined;
+  if (currentCard) URL.revokeObjectURL(currentCard);
+  currentCard = undefined;
+  for (const element of [controls, details, canvas, image, document.querySelector('#static-download')]) element.hidden = true;
+}
+
 async function showFarm(value) {
   if (generate.disabled) return;
   generate.disabled = true;
@@ -143,7 +159,8 @@ async function showFarm(value) {
   try {
     const name = value == null ? null : repositoryName(value);
     setStatus(name ? `Loading ${name}…` : 'Loading the farm…');
-    const [snapshot, art] = await Promise.all([name ? fetchRepositoryStars(name) : scheduledSnapshot(), loadArtwork()]);
+    const lookup = name ? fetchRepositoryStarsWithCache(name, {storage: browserStorage()}) : scheduledSnapshot();
+    const [snapshot, art] = await Promise.all([lookup, loadArtwork()]);
     const scene = createStarterScene(snapshot);
     const frame = drawStarCard(scene, art, createCanvas);
     const png = await pngBlob(frame);
@@ -166,15 +183,21 @@ async function showFarm(value) {
     for (const element of [controls, details, canvas]) element.hidden = false;
     image.hidden = true;
     document.querySelector('#static-download').hidden = true;
-    setStatus(`${snapshot.fullName} · ${format.format(snapshot.stars)} ${snapshot.stars === 1 ? 'star' : 'stars'}`);
+    const total = `${snapshot.fullName} · ${format.format(snapshot.stars)} ${snapshot.stars === 1 ? 'star' : 'stars'}`;
+    generate.textContent = snapshot.stale ? 'Retry lookup' : 'Generate farm';
+    setStatus(snapshot.stale
+      ? `${total} · GitHub limited requests. Showing data saved at ${snapshot.fetchedAt.slice(0, 16).replace('T', ' ')} UTC.`
+      : total);
   } catch (error) {
+    if (value != null) clearFarm();
     const message = error instanceof RepositoryLookupError
       ? {
           400: 'Enter a repository as OWNER/REPO or paste its GitHub link.',
           404: 'Could not find a public repository with that name.',
-          429: 'GitHub’s API limit was reached. Try again later.',
+          429: 'GitHub limited requests. Use Retry lookup in a moment.',
         }[error.status] ?? 'GitHub did not return the repository data. Try again in a moment.'
       : 'Could not draw the farm. Try again in a moment.';
+    generate.textContent = error instanceof RepositoryLookupError && error.status === 429 ? 'Retry lookup' : 'Generate farm';
     setStatus(message, true);
   } finally {
     generate.disabled = false;
@@ -188,6 +211,7 @@ form.addEventListener('submit', event => {
   event.preventDefault();
   showFarm(input.value);
 });
+input.addEventListener('input', () => { generate.textContent = 'Generate farm'; });
 example.addEventListener('click', () => {
   input.value = example.textContent;
   showFarm(input.value);

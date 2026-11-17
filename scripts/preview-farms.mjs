@@ -4,7 +4,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { renderStarCard } from '../src/render/card.js';
-import { starterThemes as themes } from '../src/farm/layouts.js';
+import { starterThemes as themes, workyardViewport } from '../src/farm/layouts.js';
 import { createStarterScene } from '../src/farm/scene.js';
 import { seedOf } from '../src/farm/seed.js';
 
@@ -95,6 +95,26 @@ export async function renderExpansionComparison() {
   return renderThemeComparison([100, 200, 300], 'FARM EXPANSIONS / 100 TO 300 STARS', viewport);
 }
 
+export async function renderMidgameComparison() {
+  return renderThemeComparison([300, 400, 500, 600, 700, 800, 900, 1000], 'FARM WORKYARDS / 300 TO 1,000 STARS',
+    workyardViewport);
+}
+
+async function renderStarterThumbnails() {
+  const stages = [0, 5, 25, 100, 300], width = 320, height = 240;
+  const board = createCanvas(width * themes.length, height * stages.length);
+  const ctx = board.getContext('2d');
+  for (const [column, theme] of themes.entries()) {
+    const repository = sampleRepository(theme, column);
+    for (const [row, stars] of stages.entries()) {
+      const scene = createStarterScene({...repository, stars, newStars7d: null, source: 'preview'});
+      const img = await loadImage(await renderStarCard(scene));
+      ctx.drawImage(img, column * width, row * height, width, height);
+    }
+  }
+  return board.toBuffer('image/png');
+}
+
 async function renderThemeComparison(stages, title, viewport) {
   const width = 416, height = 234, gap = 14, top = 58, label = 34;
   const board = createCanvas(themes.length * (width + gap) + gap, top + stages.length * (height + label + gap));
@@ -183,6 +203,8 @@ async function renderPreviews() {
   await writeFile(new URL('orchard-growth.png', output), await renderOrchardComparison());
   await writeFile(new URL('farm-materials.png', output), await renderMaterialComparison());
   await writeFile(new URL('farm-expansions.png', output), await renderExpansionComparison());
+  await writeFile(new URL('farm-workyards.png', output), await renderMidgameComparison());
+  await writeFile(new URL('starter-thumbnails.png', output), await renderStarterThumbnails());
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) await renderPreviews();

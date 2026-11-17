@@ -5,7 +5,7 @@ import { parseArgs } from 'node:util';
 import { createStarterScene } from '../src/farm/scene.js';
 import { fetchRepositoryStars } from '../src/repository-stars.js';
 import { renderFarmIcon, renderStarCard } from '../src/render/card.js';
-import { renderExpansionComparison, renderMaterialComparison, renderOrchardComparison, renderOrchardDetails } from './preview-farms.mjs';
+import { renderExpansionComparison, renderMaterialComparison, renderMidgameComparison, renderOrchardComparison, renderOrchardDetails } from './preview-farms.mjs';
 
 const root = new URL('../', import.meta.url);
 const output = new URL('dist/pages/', root);
@@ -44,6 +44,7 @@ try {
   await writeFile(new URL('orchard-details.png', output), await renderOrchardDetails());
   await writeFile(new URL('farm-materials.png', output), await renderMaterialComparison());
   await writeFile(new URL('farm-expansions.png', output), await renderExpansionComparison());
+  await writeFile(new URL('farm-workyards.png', output), await renderMidgameComparison());
   await copyBrowserFiles();
   console.log(`Built dist/pages/ for ${snapshot.fullName} (${snapshot.stars} stars)`);
 } catch (error) {

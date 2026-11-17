@@ -21,6 +21,6 @@
 - **发布失败**时，从 Actions 的运行详情找到失败步骤。可以修复后重新运行。Pages 会继续提供最近一次成功发布的图片。
 - **README 仍显示旧图**时，先直接打开 Pages 上的 `farm.png` 检查卡片的更新时间。Pages 上已更新时，README 的图片代理可能还在使用缓存。
 - 本地排查可执行 `npm run build -- --repo OWNER/REPO`。需要认证时，通过环境变量 `STAR_FARM_GITHUB_TOKEN` 提供令牌。
-- 在线生成器使用 GitHub 的公开 API。遇到限流时稍后重试即可。
+- 在线生成器使用 GitHub 的公开 API。遇到限流时，网页保留输入与重试按钮。若浏览器保存过该仓库最近 24 小时内的成功结果，页面和 PNG 会显示同一份保存数据并标记原更新时间。
 
 [GitHub Pages 工作流官方文档](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages) · [GitHub README 图片代理](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-anonymized-urls)

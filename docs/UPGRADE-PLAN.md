@@ -40,4 +40,12 @@
 
 [三种农场的 100、200、300 Stars 同镜头对照](https://yeatsliao.github.io/github-farm/farm-expansions.png)
 
+## 400–1,000 Stars 作业区
+
+- 菜园补清洗台、装箱和出货货架，果园沿东侧果树接榨果台和装瓶区，牧场沿第二座鸡舍补水槽、饲料和装蛋区。
+- 每 100 Stars 有新作业物件。保持镜头固定做 300–1,000 Stars 对照，单独以 320 像素宽检查 0、5、25、100、300 Stars 的地块边缘和入口。
+- 公开 API 限流时，网页用同一个仓库 24 小时内的保存数据生成预览与 PNG，并保留重试入口。
+
+[三种农场的 300–1,000 Stars 同镜头对照](https://yeatsliao.github.io/github-farm/farm-workyards.png)
+
 项目继续使用现有目录。素材原稿放在 `assets/source/`，运行时图集放在 `assets/runtime/`，局部预览图放在 `dist/`。网页和 Actions 复用同一套卡片绘制。

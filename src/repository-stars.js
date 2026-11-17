@@ -1,6 +1,9 @@
 const API = 'https://api.github.com';
 const DAY = 86_400;
 const WEEK = 7 * DAY;
+const BROWSER_CACHE = 'github-farm:repository-snapshots';
+const MAX_SAVED_REPOSITORIES = 24;
+const MAX_SAVED_AGE = DAY * 1000;
 
 export class RepositoryLookupError extends Error {
   constructor(message, status) {
@@ -81,4 +84,42 @@ export async function fetchRepositoryStars(name, {fetchImpl = fetch, token = glo
     repositoryId: String(repository.id), fullName: repository.full_name,
     stars: repository.stargazers_count, newStars7d, fetchedAt, source: 'github',
   };
+}
+
+export async function fetchRepositoryStarsWithCache(name, {storage, lookup = fetchRepositoryStars, now = Date.now} = {}) {
+  const key = name.toLowerCase();
+  let entries = [];
+  try {
+    const saved = JSON.parse(storage?.getItem(BROWSER_CACHE) ?? '[]');
+    entries = Array.isArray(saved) ? saved.filter(entry => {
+      const age = now() - Date.parse(entry?.snapshot?.fetchedAt);
+      return typeof entry?.key === 'string' && age >= 0 && age < MAX_SAVED_AGE
+        && typeof entry.snapshot.repositoryId === 'string' && typeof entry.snapshot.fullName === 'string'
+        && Number.isSafeInteger(entry.snapshot.stars) && entry.snapshot.stars >= 0;
+    }) : [];
+  } catch {
+    // Storage can be unavailable or contain old, unreadable entries.
+  }
+  const matches = entry => entry.key === key || entry.snapshot.fullName.toLowerCase() === key;
+  function save(updated) {
+    try {
+      storage?.setItem(BROWSER_CACHE, JSON.stringify(updated.slice(0, MAX_SAVED_REPOSITORIES)));
+    } catch {
+      // The online result still works when storage is full or disabled.
+    }
+  }
+  try {
+    const snapshot = await lookup(name);
+    save([{key, snapshot}, ...entries.filter(entry => !matches(entry) && entry.snapshot.fullName !== snapshot.fullName)]);
+    return snapshot;
+  } catch (error) {
+    if (error instanceof RepositoryLookupError) {
+      if (error.status === 404) save(entries.filter(entry => !matches(entry)));
+      if (error.status === 429) {
+        const cached = entries.find(matches);
+        if (cached) return {...cached.snapshot, stale: true};
+      }
+    }
+    throw error;
+  }
 }

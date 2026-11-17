@@ -132,10 +132,10 @@ function soilMask(ctx, beds, seed) {
   for (const bed of beds) {
     const { x, y, w, h } = bed;
     const points = [];
-    for (let i = 0; i <= 16; i++) points.push([x - w / 2 + i * w / 16, y - h / 2 + 3 + grain(seed, i, y) * 3]);
-    points.push([x + w / 2 + 3, y + 5]);
-    for (let i = 16; i >= 0; i--) points.push([x - w / 2 + i * w / 16, y + h / 2 - 1 + grain(seed, i, x) * 4]);
-    points.push([x - w / 2 - 3, y - 1]);
+    for (let i = 0; i <= 16; i++) points.push([x - w / 2 + 4 + i * (w - 8) / 16, y - h / 2 + grain(seed, i, y) * 5]);
+    for (let i = 1; i <= 5; i++) points.push([x + w / 2 + grain(seed, x, i) * 5 - 2, y - h / 2 + i * h / 6]);
+    for (let i = 16; i >= 0; i--) points.push([x - w / 2 + 4 + i * (w - 8) / 16, y + h / 2 - 4 + grain(seed, i, x) * 5]);
+    for (let i = 5; i >= 1; i--) points.push([x - w / 2 + grain(seed, y, i) * 5 - 2, y - h / 2 + i * h / 6]);
     polygon(ctx, points);
   }
 }

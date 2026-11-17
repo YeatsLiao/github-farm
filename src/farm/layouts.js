@@ -1,4 +1,5 @@
 export const starterViewport = {x: 54, y: 57, width: 432, height: 243};
+export const workyardViewport = {x: 30, y: 36, width: 592, height: 333};
 const plot = (id, x, y, w, h) => ({id, x, y, w, h});
 const route = (id, points) => ({id, points});
 
@@ -23,7 +24,10 @@ export const starterThemes = [
     home: [233, 181], well: [285, 206], pond: [432, 200, 37, 27], gate: [235, 356],
     beds: [gardenLeft, gardenRight],
     fences: [[[93, 217], [93, 277], [214, 277], [214, 256]], [[385, 250], [385, 287], [255, 287], [255, 270]]],
-    yardSurfaces: [{x: 204, y: 193, width: 102, height: 19, material: 'stone'}],
+    yardSurfaces: [
+      {x: 204, y: 193, width: 102, height: 19, material: 'stone'},
+      {x: 214, y: 233, width: 21, height: 8, material: 'stone'},
+    ],
     routes: [
       route('home', [[233, 188], [232, 204], [233, 233], [235, 287], [235, 352]]),
       route('well', [[281, 217], [257, 213], [232, 204]]),
@@ -52,7 +56,10 @@ export const starterThemes = [
     home: [398, 187], well: [429, 239], pond: [76, 222, 72, 59], gate: [279, 356],
     beds: [orchardBed],
     fences: [[[330, 230], [434, 230], [434, 290], [319, 290], [319, 274]], [[170, 252], [185, 263], [241, 263]]],
-    yardSurfaces: [{x: 177, y: 202, width: 84, height: 31, material: 'wood'}],
+    yardSurfaces: [
+      {x: 177, y: 202, width: 84, height: 31, material: 'wood'},
+      {x: 316, y: 247, width: 19, height: 8, material: 'stone'},
+    ],
     routes: [
       route('home', [[398, 195], [372, 198], [325, 206], [284, 226], [279, 268], [279, 350]]),
       route('pond', [[156, 223], [193, 238], [232, 238], [241, 238], [284, 226]]),
@@ -82,6 +89,7 @@ export const starterThemes = [
     home: [169, 180], well: [226, 229], pond: [404, 230, 23, 12], gate: [251, 356],
     livestock: [352, 178], beds: [pastureBed],
     fences: [[[317, 222], [317, 263], [447, 263], [447, 229]], [[447, 200], [447, 187], [421, 187]], [[317, 196], [317, 183], [327, 183]]],
+    yardSurfaces: [{x: 205, y: 247, width: 22, height: 8, material: 'stone'}],
     routes: [
       route('home', [[169, 185], [219, 195], [250, 218], [250, 270], [251, 352]]),
       route('well', [[232, 241], [250, 240]]),
